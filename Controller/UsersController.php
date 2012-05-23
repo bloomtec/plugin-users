@@ -8,6 +8,19 @@ class UsersController extends UserControlAppController {
 
 	public function beforeFilter() {
 		parent::beforeFilter();
+		$this -> User -> bindModel(
+			array(
+				'belongsTo' => array(
+					'Role' => array(
+						'className' => 'UserControl.Role',
+						'foreignKey' => 'role_id',
+						'conditions' => '',
+						'fields' => '',
+						'order' => ''
+					)
+				)
+			)
+		);
 		$this -> Auth -> allow('inicializarAcl', 'register');
 	}
 
@@ -56,8 +69,6 @@ class UsersController extends UserControlAppController {
 	 * @return void
 	 */
 	public function admin_index() {
-		$user = $this -> User -> read(null, 1);
-		debug($user);
 		$this -> User -> recursive = 0;
 		$this -> set('users', $this -> paginate());
 	}

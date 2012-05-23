@@ -41,7 +41,7 @@ class Role extends UserControlAppModel {
 	 * hasMany associations
 	 *
 	 * @var array
-	 */
+	 */	
 	public $hasMany = array(
 		'User' => array(
 			'className' => 'UserControl.User',

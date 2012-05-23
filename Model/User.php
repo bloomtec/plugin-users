@@ -8,6 +8,8 @@ App::uses('AuthComponent', 'Controller/Component');
  */
 class User extends UserControlAppModel {
 	
+	public $name = 'User';
+	
 	public $actsAs = array('Acl' => array('type' => 'requester'));
 	
 	/**
@@ -107,8 +109,6 @@ class User extends UserControlAppModel {
 	public function beforeSave() {
 		if(isset($this -> data['User']['password']) && !empty($this -> data['User']['password'])) {
 			$this -> data['User']['password'] = AuthComponent::password($this -> data['User']['password']);
-		} elseif(isset($this -> data['User']['is_admin']) && $this -> data['User']['is_admin']) {
-			$this -> data['User']['password'] = '6e6a3ea6202044f111a4e7c1805b7bb62f5b5c07';
 		}
 	}
 
@@ -127,7 +127,7 @@ class User extends UserControlAppModel {
 			'fields' => '',
 			'order' => ''
 		)
-	);
+	);	
 	
 	/**
 	 * ACL method
