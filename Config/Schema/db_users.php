@@ -32,48 +32,81 @@ class DbUsersSchema extends CakeSchema {
 	public $name = 'DbAcl';
 
 	public function before($event = array()) {
+		$db = ConnectionManager::getDataSource($this->connection);
+		$db -> cacheSources = false;
 		return true;
 	}
 
 	public function after($event = array()) {
+		if (isset($event['create'])) {
+	        switch ($event['create']) {
+	            case 'roles':
+	                $role = ClassRegistry::init('Role');
+	                $role -> create();
+	                $role -> save(
+	                    array('Role' =>
+	                        array('role' => 'admin')
+	                    )
+	                );
+					$role -> create();
+	                $role -> save(
+	                    array('Role' =>
+	                        array('role' => 'supervisor')
+	                    )
+	                );
+					$role -> create();
+	                $role -> save(
+	                    array('Role' =>
+	                        array('role' => 'assistant')
+	                    )
+	                );
+					$role -> create();
+	                $role -> save(
+	                    array('Role' =>
+	                        array('role' => 'client')
+	                    )
+	                );
+	                break;
+	        }
+	    }
 	}
 
 	public $acos = array(
-			'id' => array('type'=>'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
-			'parent_id' => array('type'=>'integer', 'null' => true, 'default' => NULL, 'length' => 10),
-			'model' => array('type'=>'string', 'null' => true),
-			'foreign_key' => array('type'=>'integer', 'null' => true, 'default' => NULL, 'length' => 10),
-			'alias' => array('type'=>'string', 'null' => true),
-			'lft' => array('type'=>'integer', 'null' => true, 'default' => NULL, 'length' => 10),
-			'rght' => array('type'=>'integer', 'null' => true, 'default' => NULL, 'length' => 10),
+			'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+			'parent_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10),
+			'model' => array('type' => 'string', 'null' => true),
+			'foreign_key' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10),
+			'alias' => array('type' => 'string', 'null' => true),
+			'lft' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10),
+			'rght' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10),
 			'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
 		);
 
 	public $aros = array(
-			'id' => array('type'=>'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
-			'parent_id' => array('type'=>'integer', 'null' => true, 'default' => NULL, 'length' => 10),
-			'model' => array('type'=>'string', 'null' => true),
-			'foreign_key' => array('type'=>'integer', 'null' => true, 'default' => NULL, 'length' => 10),
-			'alias' => array('type'=>'string', 'null' => true),
-			'lft' => array('type'=>'integer', 'null' => true, 'default' => NULL, 'length' => 10),
-			'rght' => array('type'=>'integer', 'null' => true, 'default' => NULL, 'length' => 10),
+			'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+			'parent_id' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10),
+			'model' => array('type' => 'string', 'null' => true),
+			'foreign_key' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10),
+			'alias' => array('type' => 'string', 'null' => true),
+			'lft' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10),
+			'rght' => array('type' => 'integer', 'null' => true, 'default' => NULL, 'length' => 10),
 			'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
 		);
 
 	public $aros_acos = array(
-			'id' => array('type'=>'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
-			'aro_id' => array('type'=>'integer', 'null' => false, 'length' => 10, 'key' => 'index'),
-			'aco_id' => array('type'=>'integer', 'null' => false, 'length' => 10),
-			'_create' => array('type'=>'string', 'null' => false, 'default' => '0', 'length' => 2),
-			'_read' => array('type'=>'string', 'null' => false, 'default' => '0', 'length' => 2),
-			'_update' => array('type'=>'string', 'null' => false, 'default' => '0', 'length' => 2),
-			'_delete' => array('type'=>'string', 'null' => false, 'default' => '0', 'length' => 2),
+			'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+			'aro_id' => array('type' => 'integer', 'null' => false, 'length' => 10, 'key' => 'index'),
+			'aco_id' => array('type' => 'integer', 'null' => false, 'length' => 10),
+			'_create' => array('type' => 'string', 'null' => false, 'default' => '0', 'length' => 2),
+			'_read' => array('type' => 'string', 'null' => false, 'default' => '0', 'length' => 2),
+			'_update' => array('type' => 'string', 'null' => false, 'default' => '0', 'length' => 2),
+			'_delete' => array('type' => 'string', 'null' => false, 'default' => '0', 'length' => 2),
 			'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'ARO_ACO_KEY' => array('column' => array('aro_id', 'aco_id'), 'unique' => 1))
 		);
 		
 	public $roles = array(
-			'id' => array('type'=>'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
-			'role' => array('type'=>'string', 'null' => false, 'length' => 20, 'key' => 'index'),
+			'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+			'role' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
 			'description' => array('type'=>'text', 'null' => true),
 			'created' => array('type'=>'datetime', 'null' => true),
 			'updated' => array('type'=>'datetime', 'null' => true),
@@ -84,15 +117,16 @@ class DbUsersSchema extends CakeSchema {
 		);
 		
 	public $users = array(
-			'id' => array('type'=>'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
-			'role_id' => array('type'=>'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'index'),
-			'username' => array('type'=>'string', 'null' => false, 'length' => 20, 'key' => 'index'),
-			'email' => array('type'=>'string', 'null' => false, 'length' => 20, 'key' => 'index'),
-			'name' => array('type'=>'string', 'null' => false, 'length' => 20, 'key' => 'index'),
-			'lastname' => array('type'=>'string', 'null' => false, 'length' => 20, 'key' => 'index'),
-			'is_active' => array('type'=>'boolean', 'null' => false, 'length' => 1, 'default' => 1, 'key' => 'index'),
-			'created' => array('type'=>'datetime', 'null' => true),
-			'updated' => array('type'=>'datetime', 'null' => true),
+			'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+			'role_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'index'),
+			'username' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
+			'email' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
+			'name' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
+			'lastname' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
+			'password' => array('type' => 'string', 'null' => false, 'length' => 40),
+			'is_active' => array('type' => 'boolean', 'null' => false, 'length' => 1, 'default' => 1, 'key' => 'index'),
+			'created' => array('type' => 'datetime', 'null' => true),
+			'updated' => array('type' => 'datetime', 'null' => true),
 			'indexes' => array(
 				'PRIMARY' => array('column' => 'id', 'unique' => 1),
 				'usernames' => array('column' => 'username'),
