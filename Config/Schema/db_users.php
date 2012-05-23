@@ -40,6 +40,22 @@ class DbUsersSchema extends CakeSchema {
 	public function after($event = array()) {
 		if (isset($event['create'])) {
 	        switch ($event['create']) {
+	        	case 'users':
+	                $user = ClassRegistry::init('User');
+	                $user -> create();
+	                $user -> save(
+	                    array('User' =>
+	                        array(
+	                        	'role_id' => 1,
+	                        	'username' => 'admin',
+	                        	'email' => 'admin@bloomweb.co',
+	                        	'name' => 'app',
+	                        	'lastname' => 'admin',
+	                        	'password' => 'admin'
+							)
+	                    )
+	                );
+	                break;
 	            case 'roles':
 	                $role = ClassRegistry::init('Role');
 	                $role -> create();
@@ -103,7 +119,7 @@ class DbUsersSchema extends CakeSchema {
 			'_delete' => array('type' => 'string', 'null' => false, 'default' => '0', 'length' => 2),
 			'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'ARO_ACO_KEY' => array('column' => array('aro_id', 'aco_id'), 'unique' => 1))
 		);
-		
+
 	public $roles = array(
 			'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 			'role' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
@@ -115,12 +131,12 @@ class DbUsersSchema extends CakeSchema {
 				'roles' => array('column' => 'role')
 			)
 		);
-		
+
 	public $users = array(
 			'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 			'role_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'index'),
 			'username' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
-			'email' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
+			'email' => array('type' => 'string', 'null' => false, 'length' => 100, 'key' => 'index'),
 			'name' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
 			'lastname' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
 			'password' => array('type' => 'string', 'null' => false, 'length' => 40),

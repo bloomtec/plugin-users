@@ -14,7 +14,7 @@ class UserFixture extends CakeTestFixture {
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		'role_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10),
 		'username' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 20, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'email' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 20, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
+		'email' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 20, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'lastname' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 20, 'key' => 'index', 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 		'password' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 40, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -35,13 +35,13 @@ class UserFixture extends CakeTestFixture {
 			'id' => 1,
 			'role_id' => 1,
 			'username' => 'Lorem ipsum dolor ',
-			'email' => 'Lorem ipsum dolor ',
+			'email' => 'Lorem ipsum dolor sit amet',
 			'name' => 'Lorem ipsum dolor ',
 			'lastname' => 'Lorem ipsum dolor ',
 			'password' => 'Lorem ipsum dolor sit amet',
 			'is_active' => 1,
-			'created' => '2012-05-23 12:07:53',
-			'updated' => '2012-05-23 12:07:53'
+			'created' => '2012-05-23 15:55:10',
+			'updated' => '2012-05-23 15:55:10'
 		),
 	);
 }
