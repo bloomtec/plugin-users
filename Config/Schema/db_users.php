@@ -106,25 +106,19 @@ class DbUsersSchema extends CakeSchema {
 	                $Role -> create();
 	                $Role -> save(
 	                    array('Role' =>
-	                        array('role' => 'administrator')
+	                        array('role' => 'Administrador')
 	                    )
 	                );
 					$Role -> create();
 	                $Role -> save(
 	                    array('Role' =>
-	                        array('role' => 'supervisor')
+	                        array('role' => 'Supervisor')
 	                    )
 	                );
 					$Role -> create();
 	                $Role -> save(
 	                    array('Role' =>
-	                        array('role' => 'assistant')
-	                    )
-	                );
-					$Role -> create();
-	                $Role -> save(
-	                    array('Role' =>
-	                        array('role' => 'client')
+	                        array('role' => 'Cliente')
 	                    )
 	                );
 	                break;
@@ -209,7 +203,17 @@ class DbUsersSchema extends CakeSchema {
 		$this -> User -> query("UPDATE `aros` SET `alias`='$alias_usuario' WHERE `model`='User' AND `foreign_key`=$id_usuario");
 		
 		// Se permite acceso total a los administradores y se le niega totalmente a los demás
-		foreach($roles as $data) {
+		foreach ($db_roles as $key => $role) {
+			$path = null;
+			$alias = $role['Role']['role'];
+			if($role['Role']['id'] == 1) {
+				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias controllers";
+			} else {
+				$path = APP . 'Console/cake -app ' . APP . " acl deny $alias controllers";
+			}
+			exec($path);
+		}
+		/*foreach($roles as $data) {
 			$path = null;
 			$alias = $data['alias']; 
 			if($alias == 'administrator') {
@@ -220,7 +224,7 @@ class DbUsersSchema extends CakeSchema {
 				$path = APP . 'Console/cake -app ' . APP . " acl deny $alias controllers";
 			}
 			exec($path);
-		}
+		}*/
 	}
 	
 	public $roles = array(
