@@ -40,21 +40,55 @@ class DbUsersSchema extends CakeSchema {
 	public function after($event = array()) {
 		if (isset($event['create'])) {
 	        switch ($event['create']) {
-	        	case 'user_mail_configs':
-	                $user_mail_config = ClassRegistry::init('UserMailConfig');
-	                $user_mail_config -> create();
-	                $user_mail_config -> save(
-	                    array('User' =>
+	        	case 'mail_services':
+					$MailService = ClassRegistry::init('MailService');
+					$MailService -> create();
+	                $MailService -> save(
+	                    array('MailService' =>
 	                        array(
-	                        	
+	                        	'name' => 'MailChimp'
 							)
 	                    )
 	                );
 	                break;
-	        	case 'users':
-	                $user = ClassRegistry::init('User');
-	                $user -> create();
-	                $user -> save(
+	        	case 'mailing_lists':
+					$UserMailConfig = ClassRegistry::init('UserMailConfig');
+					$mail_configs = $UserMailConfig -> find('all');
+	                $MailingList = ClassRegistry::init('MailingList');
+					foreach($mail_configs as $mail_config) {
+						for ($i=0; $i < 5; $i++) { 
+							$MailingList -> create();
+			                $MailingList -> save(
+			                    array('MailingList' =>
+			                        array(
+			                        	'user_mail_config_id' => $mail_config['UserMailConfig']['id'],
+			                        	'list_name' => '',
+			                        	'list_id' => ''
+									)
+			                    )
+			                );
+						}	
+					}
+	                break;
+	        	case 'user_mail_configs':
+					$MailService = ClassRegistry::init('MailService');
+	                $UserMailConfig = ClassRegistry::init('UserMailConfig');
+					$mail_services = $MailService -> find('all');
+					foreach ($mail_services as $key => $mail_service) {
+						$UserMailConfig -> create();
+		                $UserMailConfig -> save(
+		                    array('UserMailConfig' =>
+		                        array(
+		                        	'mail_service_id' => $mail_service['MailService']['id']
+								)
+		                    )
+		                );
+					}
+	                break;
+	        	/*case 'users':
+	                $User = ClassRegistry::init('User');
+	                $User -> create();
+	                $User -> save(
 	                    array('User' =>
 	                        array(
 	                        	'role_id' => 1,
@@ -66,39 +100,161 @@ class DbUsersSchema extends CakeSchema {
 							)
 	                    )
 	                );
-	                break;
+	                break;*/
 	            case 'roles':
-	                $role = ClassRegistry::init('Role');
-	                $role -> create();
-	                $role -> save(
+	                $Role = ClassRegistry::init('Role');
+	                $Role -> create();
+	                $Role -> save(
 	                    array('Role' =>
-	                        array('role' => 'admin')
+	                        array('role' => 'administrator')
 	                    )
 	                );
-					$role -> create();
-	                $role -> save(
+					$Role -> create();
+	                $Role -> save(
 	                    array('Role' =>
 	                        array('role' => 'supervisor')
 	                    )
 	                );
-					$role -> create();
-	                $role -> save(
+					$Role -> create();
+	                $Role -> save(
 	                    array('Role' =>
 	                        array('role' => 'assistant')
 	                    )
 	                );
-					$role -> create();
-	                $role -> save(
+					$Role -> create();
+	                $Role -> save(
 	                    array('Role' =>
 	                        array('role' => 'client')
 	                    )
 	                );
 	                break;
+				case 'aros_acos':
+					$this -> initAcl();
+					break;
 				default:
 					break;
 	        }
 	    }
 	}
+
+	private function initAcl() {			
+		$path = APP . 'Console/cake -app ' . APP . ' AclExtras.AclExtras aco_sync';
+		exec($path);
+		
+		/**
+		 * Inicializar modelos requeridos
+		 */
+		 
+		App::uses('User', 'UserControl.Model');
+		App::uses('Role', 'UserControl.Model');
+		
+		$this -> User =& new User();
+		$this -> User -> bindModel(
+			array(
+				'belongsTo' => array(
+					'Role' => array(
+						'className' => 'UserControl.Role',
+						'foreignKey' => 'role_id',
+						'conditions' => '',
+						'fields' => '',
+						'order' => ''
+					)
+				)
+			)
+		);
+		
+		/**
+		 * Agregar Aro's
+		 */
+		$Aro = ClassRegistry::init('Aro');
+		$Role =& ClassRegistry::init('Role');
+		$db_roles = $Role -> find('all');
+		
+		$roles = array();
+		foreach ($db_roles as $key => $role) {
+			$roles[$key] = array(
+				'foreign_key' => $role['Role']['id'],
+				'model' => 'Role',
+				'alias' => $role['Role']['role']
+			);
+		}
+
+		// Iterate and create ARO groups
+		foreach ($roles as $data) {
+			$Aro -> create();
+			$Aro -> save($data);
+		}
+
+		/**
+		 * Crear el usuario admin
+		 */
+
+		// Administrador
+		$this -> User -> create();
+		$usuario = array(
+			'User' => array(
+				'username' => 'admin',
+				'email' => 'admin@bloomweb.co',
+				'password' => 'admin',
+				'name' => 'app',
+				'lastname' => 'admin',
+				'role_id' => 1
+			)
+		);
+		$this -> User -> save($usuario);
+		
+		// tratando de arreglar lo del alias en la tabla aros
+		$id_usuario = $this -> User -> id;
+		$alias_usuario = $usuario['User']['username'];
+		$this -> User -> query("UPDATE `aros` SET `alias`='$alias_usuario' WHERE `model`='User' AND `foreign_key`=$id_usuario");
+		
+		// Se permite acceso total a los administradores y se le niega totalmente a los demás
+		foreach($roles as $data) {
+			$path = null;
+			$alias = $data['alias']; 
+			if($alias == 'administrator') {
+				//$this -> Acl -> allow($data['alias'], 'controllers');
+				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias controllers";
+			} else {
+				//$this -> Acl -> deny($data['alias'], 'controllers');
+				$path = APP . 'Console/cake -app ' . APP . " acl deny $alias controllers";
+			}
+			exec($path);
+		}
+	}
+	
+	public $roles = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+		'role' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
+		'description' => array('type'=>'text', 'null' => true),
+		'created' => array('type'=>'datetime', 'null' => true),
+		'updated' => array('type'=>'datetime', 'null' => true),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'roles' => array('column' => 'role')
+		)
+	);
+	
+	public $users = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+		'role_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'index'),
+		'username' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
+		'email' => array('type' => 'string', 'null' => false, 'length' => 100, 'key' => 'index'),
+		'name' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
+		'lastname' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
+		'password' => array('type' => 'string', 'null' => false, 'length' => 40),
+		'is_active' => array('type' => 'boolean', 'null' => false, 'length' => 1, 'default' => 1, 'key' => 'index'),
+		'created' => array('type' => 'datetime', 'null' => true),
+		'updated' => array('type' => 'datetime', 'null' => true),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'usernames' => array('column' => 'username'),
+			'emails' => array('column' => 'email'),
+			'names' => array('column' => 'name'),
+			'lastnames' => array('column' => 'lastname'),
+			'actives' => array('column' => 'is_active'),
+		)
+	);
 
 	public $acos = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
@@ -132,48 +288,43 @@ class DbUsersSchema extends CakeSchema {
 		'_delete' => array('type' => 'string', 'null' => false, 'default' => '0', 'length' => 2),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1), 'ARO_ACO_KEY' => array('column' => array('aro_id', 'aco_id'), 'unique' => 1))
 	);
-
-	public $roles = array(
+	
+	public $mail_services = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
-		'role' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
-		'description' => array('type'=>'text', 'null' => true),
-		'created' => array('type'=>'datetime', 'null' => true),
-		'updated' => array('type'=>'datetime', 'null' => true),
-		'indexes' => array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'roles' => array('column' => 'role')
-		)
-	);
-
-	public $users = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
-		'role_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'index'),
-		'username' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
-		'email' => array('type' => 'string', 'null' => false, 'length' => 100, 'key' => 'index'),
-		'name' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
-		'lastname' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
-		'password' => array('type' => 'string', 'null' => false, 'length' => 40),
-		'is_active' => array('type' => 'boolean', 'null' => false, 'length' => 1, 'default' => 1, 'key' => 'index'),
+		'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'key' => 'index'),
 		'created' => array('type' => 'datetime', 'null' => true),
 		'updated' => array('type' => 'datetime', 'null' => true),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'usernames' => array('column' => 'username'),
-			'emails' => array('column' => 'email'),
-			'names' => array('column' => 'name'),
-			'lastnames' => array('column' => 'lastname'),
-			'actives' => array('column' => 'is_active'),
+			'names' => array('column' => 'name')
 		)
 	);
 	
 	public $user_mail_configs = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
-		'mailchimp_api_key' => array('type' => 'string', 'default' => NULL, 'length' => 36),
-		'is_mailchimp_active' => array('type' => 'boolean', 'null' => false, 'length' => 1, 'default' => 0),
+		'mail_service_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'index'),
+		'api_key' => array('type' => 'string', 'default' => NULL, 'length' => 100),
+		'is_active' => array('type' => 'boolean', 'null' => false, 'length' => 1, 'default' => 0),
 		'created' => array('type' => 'datetime', 'null' => true),
 		'updated' => array('type' => 'datetime', 'null' => true),
 		'indexes' => array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1)
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'mail_services' => array('column' => 'mail_service_id')
+		)
+	);
+	
+	public $mailing_lists = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+		'user_mail_config_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'index'),
+		'list_name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'key' => 'index'),
+		'list_id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'key' => 'index'),
+		'created' => array('type' => 'datetime', 'null' => true),
+		'updated' => array('type' => 'datetime', 'null' => true),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'user_mail_configs' => array('column' => 'user_mail_config_id'),
+			'lists' => array('column' => 'list_name'),
+			'list_ids' => array('column' => 'list_id'),
 		)
 	);
 

@@ -5,6 +5,10 @@ App::uses('UserControlAppController', 'UserControl.Controller');
  *
  */
 class UserMailConfigsController extends UserControlAppController {
+	
+	public function beforeFilter() {
+		parent::beforeFilter();
+	}
 
 	/**
 	 * Cambiar la configuración de aplicaciones web para envío de correos
@@ -17,7 +21,7 @@ class UserMailConfigsController extends UserControlAppController {
 			throw new NotFoundException(__('Error en la configuración de aplicaciones de envío de correos'));
 		}
 		if ($this -> request -> is('post') || $this -> request -> is('put')) {
-			if ($this -> UserMailConfig -> save($this -> request -> data)) {
+			if ($this -> UserMailConfig -> saveAll($this -> request -> data)) {
 				$this -> Session -> setFlash(__('Se guardaron los cambios en la configuración'));
 			} else {
 				$this -> Session -> setFlash(__('Error al tratar de guardar la configuración. Verifique los campos e intente de nuevo.'));
@@ -25,6 +29,7 @@ class UserMailConfigsController extends UserControlAppController {
 		} else {
 			$this -> request -> data = $this -> UserMailConfig -> read(null, 1);
 		}
+		$this -> set('mailServices', $this -> UserMailConfig -> MailService -> find('list'));
 	}
 
 }

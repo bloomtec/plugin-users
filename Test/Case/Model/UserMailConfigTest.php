@@ -11,7 +11,7 @@ class UserMailConfigTestCase extends CakeTestCase {
  *
  * @var array
  */
-	public $fixtures = array('plugin.user_control.user_mail_config');
+	public $fixtures = array('plugin.user_control.user_mail_config', 'app.mail_service', 'app.mailing_list');
 
 /**
  * setUp method

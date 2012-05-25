@@ -21,7 +21,7 @@ class UsersController extends UserControlAppController {
 				)
 			)
 		);
-		$this -> Auth -> allow('inicializarAcl', 'register');
+		$this -> Auth -> allow('register');
 	}
 
 	/**
@@ -140,7 +140,7 @@ class UsersController extends UserControlAppController {
 	}
 	
 	/**
-	 * login method
+	 * Inicio de sesión
 	 *
 	 * @return void
 	 */
@@ -156,7 +156,7 @@ class UsersController extends UserControlAppController {
 	}
 
 	/**
-	 * logout method
+	 * Cerrar la sesión de usuario activa
 	 *
 	 * @return void
 	 */
@@ -166,14 +166,21 @@ class UsersController extends UserControlAppController {
 	
 	/**
 	 * Registro de usuario
+	 * 
+	 * @return void
 	 */
 	public function register() {
 		if ($this -> request -> is('post')) {
 			$this -> request -> data['User']['role_id'] = 4;
 			$this -> User -> create();
 			if ($this -> User -> save($this -> request -> data)) {
-				$this -> Session -> setFlash(__('Registro Exitoso'));
-				$this -> redirect(array('action' => 'index'));
+				$result = $this -> sendRegistrationEmail($this -> request -> data);
+				if($result) {
+					$this -> Session -> setFlash(__('Registro Exitoso. Se te ha enviado un correo a la dirección registrada'));
+				} else {
+					$this -> Session -> setFlash(__('Registro Exitoso'));
+				}
+				$this -> redirect('/');
 			} else {
 				$this -> Session -> setFlash(__('Falló el registro. Verifique los datos e intente de nuevo.'));
 			}
@@ -181,10 +188,59 @@ class UsersController extends UserControlAppController {
 	}
 	
 	/**
-	 * Enviar correo de confirmación de registro
+	 * Verificar los posibles medios de envío de correo y proceder acorde
+	 * 
+	 * @var $user arreglo con los datos del usuario
+	 * 
+	 * @return true o false dependiendo de si fue exitoso el envío
 	 */
-	public function sendRegistrationEmail() {
-		
+	private function sendRegistrationEmail($user = null) {
+		if($user) {
+			$this -> loadModel('UserMailConfig');
+			$user_mail_config = $this -> UserMailConfig -> read(null, 1);
+			
+			// Verificar si se está usando un servicio
+			if($user_mail_config['UserMailConfig']['is_active']) {
+				// Verificar el servicio que se esta usando
+				switch($user_mail_config['UserMailConfig']['mail_service_id']) {
+					// MailChimp
+					case 1:
+						return $this -> mailChimpRegistrationEmail($user, $user_mail_config['UserMailConfig']['api_key']);
+						break;
+					// No hay servicios configurados
+					default:
+						// TODO : que hacer aqui?
+						return false;
+						break;
+				}
+			}
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Envío de correo mediante mailchimp
+	 * 
+	 * @var $user arreglo con los datos del usuario
+	 * @var $api_key llave de acceso de la cuenta de mailchimp
+	 * 
+	 * @return true o false dependiendo de si fue exitoso el envío 
+	 */
+	private function mailChimpRegistrationEmail($user = null, $api_key = null) {
+		if($user && $api_key) {
+			$lib_path = APP . 'Plugin/UserControl/Lib/MailChimp/MCAPI.class.php';
+			require_once($lib_path);
+			$api = new MCAPI($api_key);
+			
+			$list_id = '0ae21abae4'; // ID único de la lista de clientes registrados
+			$merge_vars = array();
+			
+			return $api -> listSubscribe($list_id, $user['User']['email'], $merge_vars);
+			
+		} else {
+			return false;
+		}
 	}
 	
 	/**
@@ -199,103 +255,6 @@ class UsersController extends UserControlAppController {
 	 */
 	public function sendResetPasswordConfirmationEmail() {
 		
-	}
-	
-	/**
-	 * initAcl method
-	 *
-	 * @return void
-	 */
-	public function inicializarAcl() {
-		$this -> autoRender = false;
-
-		/**
-		 * Limpiar las tablas
-		 */
-
-		// Limpiar ARO's vs ACO's
-			$this -> User -> query('TRUNCATE TABLE aros_acos;');
-		// Limpiar ARO's
-			$this -> User -> query('TRUNCATE TABLE aros;');
-		// Limpiar ACO's
-			$this -> User -> query('TRUNCATE TABLE acos;');
-		// Limpiar Usuarios
-			$this -> User -> query('TRUNCATE TABLE users;');
-			
-		$path = APP . 'Console/cake -app ' . APP . ' AclExtras.AclExtras aco_sync';
-		exec($path);
-
-		/**
-		 * Agregar Aro's
-		 */
-		$aro = &$this -> Acl -> Aro;
-
-		// Here's all of our group info in an array we can iterate through
-		$roles = array(
-			0 => array(
-				'foreign_key' => 1,
-				'model' => 'Role',
-				'alias' => 'admin'
-			),
-			1 => array(
-				'foreign_key' => 2,
-				'model' => 'Role',
-				'alias' => 'supervisor'
-			),
-			2 => array(
-				'foreign_key' => 3,
-				'model' => 'Role',
-				'alias' => 'assistant'
-			),
-			3 => array(
-				'foreign_key' => 4,
-				'model' => 'Role',
-				'alias' => 'client'
-			)
-		);
-
-		// Iterate and create ARO groups
-		foreach ($roles as $data) {
-			// Remember to call create() when saving in loops...
-			$aro -> create();
-
-			// Save data
-			$aro -> save($data);
-		}
-
-		/**
-		 * Usuarios
-		 */
-
-		// Administrador
-		$this -> User -> create();
-		$usuario = array();
-		$usuario['User']['username'] = 'admin';
-		$usuario['User']['email'] = 'admin@bloomweb.co';
-		$usuario['User']['password'] = 'admin';
-		$usuario['User']['name'] = 'app';
-		$usuario['User']['lastname'] = 'admin';
-		$usuario['User']['role_id'] = 1;
-		$this -> User -> save($usuario);
-		
-		// tratando de arreglar lo del alias en la tabla aros
-		$id_usuario = $this -> User -> id;
-		$alias_usuario = $usuario['User']['username'];
-		$this -> User -> query("UPDATE `aros` SET `alias`='$alias_usuario' WHERE `model`='User' AND `foreign_key`=$id_usuario");
-		
-		// Se permite acceso total a los administradores
-		$this -> Acl -> allow('admin', 'controllers');
-
-		// Se le niega totalmente el acceso a los operadores e inspectores de manera inicial
-		$this -> Acl -> deny('supervisor', 'controllers');
-		$this -> Acl -> deny('assistant', 'controllers');
-		$this -> Acl -> deny('client', 'controllers');
-		
-		/**
-		 * Finished
-		 */
-		echo 'Usuario Administrativo Y Permisos Inicializados';
-		exit ;
 	}
 
 }
