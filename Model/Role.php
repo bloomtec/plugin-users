@@ -9,6 +9,8 @@ class Role extends UserControlAppModel {
 	
 	public $actsAs = array('Acl' => array('type' => 'requester'));
 	
+	public $displayField = 'role';
+	
 	/**
 	 * Validation rules
 	 *

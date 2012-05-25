@@ -8,9 +8,9 @@ App::uses('AuthComponent', 'Controller/Component');
  */
 class User extends UserControlAppModel {
 	
-	public $name = 'User';
-	
 	public $actsAs = array('Acl' => array('type' => 'requester'));
+	
+	public $displayField = 'username';
 	
 	/**
 	 * Validation rules
@@ -136,7 +136,11 @@ class User extends UserControlAppModel {
 	
 	public function compareEmails() {
 		if(isset($this -> data['User']['email']) && isset($this -> data['User']['verify_email'])) {
-			$this -> data['User']['verify_email'] == $this -> data['User']['verify_email'] ? true : false;
+			if($this -> data['User']['email'] == $this -> data['User']['verify_email']) {
+				return true;
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}
@@ -144,7 +148,11 @@ class User extends UserControlAppModel {
 	
 	public function comparePasswords() {
 		if(isset($this -> data['User']['password']) && isset($this -> data['User']['verify_password'])) {
-			$this -> data['User']['verify_password'] == $this -> data['User']['verify_password'] ? true : false;
+			if($this -> data['User']['password'] == $this -> data['User']['verify_password']) {
+				return true;
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}
@@ -153,6 +161,7 @@ class User extends UserControlAppModel {
 	public function beforeSave() {
 		if(isset($this -> data['User']['password']) && !empty($this -> data['User']['password'])) {
 			$this -> data['User']['password'] = AuthComponent::password($this -> data['User']['password']);
+			$this -> data['User']['verify_password'] = AuthComponent::password($this -> data['User']['verify_password']);
 		}
 	}
 
@@ -181,7 +190,7 @@ class User extends UserControlAppModel {
 	        return null;
 	    }
 	    $data = $this -> data;
-	    if (empty($this -> data)) {
+	    if (empty($data)) {
 	        $data = $this -> read();
 	    }
 	    if (!$data['User']['role_id']) {

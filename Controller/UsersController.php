@@ -5,6 +5,12 @@ App::uses('UserControlAppController', 'UserControl.Controller');
  *
  */
 class UsersController extends UserControlAppController {
+	
+	/**
+	 * Llaves de ReCaptcha
+	 */
+	private $public_key = "6LfC5dESAAAAANQHI4pvu2S_wniSgHivoXFYuT5a";
+	private $private_key = "6LfC5dESAAAAAL-J0uwgmJMSxrBSwSd0uXXZ3Wqt";
 
 	public function beforeFilter() {
 		parent::beforeFilter();
@@ -145,14 +151,56 @@ class UsersController extends UserControlAppController {
 	 * @return void
 	 */
 	public function login() {
+		
+		/**
+		 * Llevar un registro de cuantos inicios de sesión se tienen
+		 */
+		$login_attempts = $this -> Session -> read('login_attemps');
+		if(!$login_attempts) {
+			$login_attempts = 1;
+		}
+		$this -> Session -> write('login_attempts', 1);
+		
+		/**
+		 * Sección ReCaptcha
+		 */
+		 
+		// ReCaptcha Lib
+		$lib_path = APP . 'Plugin/UserControl/Lib/ReCaptcha/recaptchalib.php';
+		require_once ($lib_path);
+		
+		$error = null;
+		
+		/**
+		 * Fin sección ReCaptcha
+		 */
+		
 		if ($this -> request -> is('post')) {
-			if ($this -> Auth -> login()) {
-				return $this -> redirect($this -> Auth -> redirect());
-				$this -> Session -> setFlash(__('Has iniciado sesión.'), 'default', array(), 'auth');
-			} else {
-				$this -> Session -> setFlash(__('Usuario o contraseña incorrectos.'), 'default', array(), 'auth');
+			// was there a reCAPTCHA response?
+			if (isset($_POST['recaptcha_challenge_field']) && isset($_POST['recaptcha_response_field'])) {
+				$resp = recaptcha_check_answer(
+					$this -> private_key, $_SERVER["REMOTE_ADDR"],
+					$_POST['recaptcha_challenge_field'],
+					$_POST['recaptcha_response_field']
+				);
+				
+				// Verificar la respuesta de ReCaptcha
+				if ($resp -> is_valid) {
+					if ($this -> Auth -> login($this -> request -> data)) {
+						return $this -> redirect($this -> Auth -> redirect());
+						$this -> Session -> setFlash(__('Has iniciado sesión.'), 'default', array(), 'auth');
+					} else {
+						$this -> Session -> setFlash(__('Usuario o contraseña incorrectos.'), 'default', array(), 'auth');
+					}
+				} else {
+					// Asignar el error para llevar a la vista
+					$this -> Session -> setFlash(__('Debes ingresar los datos correctos al captcha'));
+					$error = $resp -> error;
+				}
 			}
 		}
+		$this -> set('error', $error);
+		$this -> set('public_key', $this -> public_key);
 	}
 
 	/**
@@ -179,13 +227,6 @@ class UsersController extends UserControlAppController {
 		$lib_path = APP . 'Plugin/UserControl/Lib/ReCaptcha/recaptchalib.php';
 		require_once ($lib_path);
 		
-		// Get a key from https://www.google.com/recaptcha/admin/create
-		$public_key = "6LfC5dESAAAAANQHI4pvu2S_wniSgHivoXFYuT5a";
-		$private_key = "6LfC5dESAAAAAL-J0uwgmJMSxrBSwSd0uXXZ3Wqt";
-		
-		// the response from reCAPTCHA
-		$resp = null;
-		// the error code from reCAPTCHA, if any
 		$error = null;
 		
 		/**
@@ -193,28 +234,29 @@ class UsersController extends UserControlAppController {
 		 */
 		
 		if ($this -> request -> is('post')) {
-			
-			debug($this -> request -> data);
-			
 			// was there a reCAPTCHA response?
-			//if (isset($_POST["recaptcha_response_field"])) {
-			if (isset($this -> request -> data['User']['captcha_response']) && !empty($this -> request -> data['User']['captcha_response'])) {
+			if (isset($_POST['recaptcha_challenge_field']) && isset($_POST['recaptcha_response_field'])) {
 				$resp = recaptcha_check_answer(
-					$private_key, $_SERVER["REMOTE_ADDR"],
-					$this -> request -> data['User']['captcha_challenge'],
-					$this -> request -> data['User']['captcha_response']
+					$this -> private_key, $_SERVER["REMOTE_ADDR"],
+					$_POST['recaptcha_challenge_field'],
+					$_POST['recaptcha_response_field']
 				);
 				
 				// Verificar la respuesta de ReCaptcha
 				if ($resp -> is_valid) {
-					echo 'EXITO';
 					// Proceder con la creación de usuario
 					if(!isset($this -> request -> data['User']['username'])) {
 						$this -> request -> data['User']['username'] = $this -> request -> data['User']['email'];
 					}
-					$this -> request -> data['User']['role_id'] = 4;
+					$clientRole = $this -> User -> Role -> find('first', array('order' => array('id' => 'DESC'), 'recursive' => -1));
+					$this -> request -> data['User']['role_id'] = $clientRole['Role']['id'];
 					$this -> User -> create();
 					if ($this -> User -> save($this -> request -> data)) {
+						$user_id = $this -> User -> id;
+						$user_alias = $this -> request -> data['User']['username'];
+						$this -> User -> query("UPDATE `aros` SET `alias`='$user_alias' WHERE `model`='User' AND `foreign_key`=$user_id");
+						
+						// Enviar el correo de registro
 						$result = $this -> sendRegistrationEmail($this -> request -> data);
 						if($result) {
 							$this -> Session -> setFlash(__('Registro Exitoso. Se te ha enviado un correo a la dirección registrada'));
@@ -227,13 +269,13 @@ class UsersController extends UserControlAppController {
 					}
 				} else {
 					// Asignar el error para llevar a la vista
-					echo 'ERROR';
+					$this -> Session -> setFlash(__('Debes ingresar los datos correctos al captcha'));
 					$error = $resp -> error;
 				}
 			}
 		}
-		
-		$this -> set(compact('error', 'public_key'));
+		$this -> set('error', $error);
+		$this -> set('public_key', $this -> public_key);
 	}
 	
 	/**

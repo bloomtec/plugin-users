@@ -189,15 +189,14 @@ class DbUsersSchema extends CakeSchema {
 			'User' => array(
 				'username' => 'admin',
 				'email' => 'admin@bloomweb.co',
+				'verify_email' => 'admin@bloomweb.co',
 				'password' => 'admin',
+				'verify_password' => 'admin',
 				'name' => 'app',
 				'lastname' => 'admin',
 				'role_id' => 1
 			)
 		);
-		
-		fwrite(STDOUT, "\n¿Usar email como username?\n[n] > "); // Output - prompt user
-		$answer = trim(fgets(STDIN));
 		
 		$pedirInput = true;
 		
@@ -210,8 +209,8 @@ class DbUsersSchema extends CakeSchema {
 				$pedirInput = false;
 			} elseif($answer == 'y' || $answer == 'n') {
 				$pedirInput = false;
-			}			
-		} while($pedirInput);
+			}
+		} while((bool) $pedirInput);
 		
 		if($answer == 'y') { $usuario['User']['username'] = $usuario['User']['email']; }
 		
