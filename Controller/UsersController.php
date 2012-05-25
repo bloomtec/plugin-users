@@ -209,7 +209,9 @@ class UsersController extends UserControlAppController {
 				if ($resp -> is_valid) {
 					echo 'EXITO';
 					// Proceder con la creación de usuario
-					$this -> request -> data['User']['username'] = $this -> request -> data['User']['email'];
+					if(!isset($this -> request -> data['User']['username'])) {
+						$this -> request -> data['User']['username'] = $this -> request -> data['User']['email'];
+					}
 					$this -> request -> data['User']['role_id'] = 4;
 					$this -> User -> create();
 					if ($this -> User -> save($this -> request -> data)) {

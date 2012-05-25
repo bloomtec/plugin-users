@@ -8,7 +8,7 @@
 				<?php
 				//echo $this -> Form -> input('username', array('label' => 'Nombre De Usuario', 'required' => 'required'));
 				echo $this -> Form -> input('email', array('label' => 'Correo Electrónico', 'type' => 'email', 'required' => 'required'));
-				echo $this -> Form -> input('verify_email', array('label' => 'Correo Electrónico', 'type' => 'email', 'required' => 'required', 'data-equals' => 'data[User][email]'));
+				echo $this -> Form -> input('verify_email', array('label' => 'Confirmar Correo Electrónico', 'type' => 'email', 'required' => 'required', 'data-equals' => 'data[User][email]'));
 				echo $this -> Form -> input('name', array('label' => 'Nombre', 'required' => 'required'));
 				echo $this -> Form -> input('lastname', array('label' => 'Apellido', 'required' => 'required'));
 				echo $this -> Form -> input('password', array('label' => 'Contraseña', 'type' => 'password', 'value' => '', 'required' => 'required'));
