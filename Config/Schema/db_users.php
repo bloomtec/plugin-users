@@ -242,7 +242,7 @@ class DbUsersSchema extends CakeSchema {
 	public $users = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		'role_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'index'),
-		'username' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
+		'username' => array('type' => 'string', 'null' => false, 'length' => 100, 'key' => 'index'),
 		'email' => array('type' => 'string', 'null' => false, 'length' => 100, 'key' => 'index'),
 		'name' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
 		'lastname' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
