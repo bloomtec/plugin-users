@@ -64,6 +64,24 @@ class User extends UserControlAppModel {
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
+		'verify_email' => array(
+			'email' => array(
+				'rule' => array('email'),
+				'message' => 'Ingrese un correo electrónico',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+			'compareEmails' => array(
+				'rule' => array('compareEmails'),
+				'message' => 'Los correos electrónicos no son iguales',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
 		'name' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
@@ -94,6 +112,16 @@ class User extends UserControlAppModel {
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
+		'verify_password' => array(
+			'comparePasswords' => array(
+				'rule' => array('comparePasswords'),
+				'message' => 'Las contraseñas no son iguales',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
 		'is_active' => array(
 			'boolean' => array(
 				'rule' => array('boolean'),
@@ -105,6 +133,22 @@ class User extends UserControlAppModel {
 			),
 		),
 	);
+	
+	public function compareEmails() {
+		if(isset($this -> data['User']['email']) && isset($this -> data['User']['verify_email'])) {
+			$this -> data['User']['verify_email'] == $this -> data['User']['verify_email'] ? true : false;
+		} else {
+			return false;
+		}
+	}
+	
+	public function comparePasswords() {
+		if(isset($this -> data['User']['password']) && isset($this -> data['User']['verify_password'])) {
+			$this -> data['User']['verify_password'] == $this -> data['User']['verify_password'] ? true : false;
+		} else {
+			return false;
+		}
+	}
 	
 	public function beforeSave() {
 		if(isset($this -> data['User']['password']) && !empty($this -> data['User']['password'])) {

@@ -170,21 +170,68 @@ class UsersController extends UserControlAppController {
 	 * @return void
 	 */
 	public function register() {
+		
+		/**
+		 * Sección ReCaptcha
+		 */
+		 
+		// ReCaptcha Lib
+		$lib_path = APP . 'Plugin/UserControl/Lib/ReCaptcha/recaptchalib.php';
+		require_once ($lib_path);
+		
+		// Get a key from https://www.google.com/recaptcha/admin/create
+		$public_key = "6LfC5dESAAAAANQHI4pvu2S_wniSgHivoXFYuT5a";
+		$private_key = "6LfC5dESAAAAAL-J0uwgmJMSxrBSwSd0uXXZ3Wqt";
+		
+		// the response from reCAPTCHA
+		$resp = null;
+		// the error code from reCAPTCHA, if any
+		$error = null;
+		
+		/**
+		 * Fin sección ReCaptcha
+		 */
+		
 		if ($this -> request -> is('post')) {
-			$this -> request -> data['User']['role_id'] = 4;
-			$this -> User -> create();
-			if ($this -> User -> save($this -> request -> data)) {
-				$result = $this -> sendRegistrationEmail($this -> request -> data);
-				if($result) {
-					$this -> Session -> setFlash(__('Registro Exitoso. Se te ha enviado un correo a la dirección registrada'));
+			
+			debug($this -> request -> data);
+			
+			// was there a reCAPTCHA response?
+			//if (isset($_POST["recaptcha_response_field"])) {
+			if (isset($this -> request -> data['User']['captcha_response']) && !empty($this -> request -> data['User']['captcha_response'])) {
+				$resp = recaptcha_check_answer(
+					$private_key, $_SERVER["REMOTE_ADDR"],
+					$this -> request -> data['User']['captcha_challenge'],
+					$this -> request -> data['User']['captcha_response']
+				);
+				
+				// Verificar la respuesta de ReCaptcha
+				if ($resp -> is_valid) {
+					echo 'EXITO';
+					// Proceder con la creación de usuario
+					$this -> request -> data['User']['username'] = $this -> request -> data['User']['email'];
+					$this -> request -> data['User']['role_id'] = 4;
+					$this -> User -> create();
+					if ($this -> User -> save($this -> request -> data)) {
+						$result = $this -> sendRegistrationEmail($this -> request -> data);
+						if($result) {
+							$this -> Session -> setFlash(__('Registro Exitoso. Se te ha enviado un correo a la dirección registrada'));
+						} else {
+							$this -> Session -> setFlash(__('Registro Exitoso'));
+						}
+						$this -> redirect('/');
+					} else {
+						$this -> Session -> setFlash(__('Falló el registro. Verifique los datos e intente de nuevo.'));
+					}
 				} else {
-					$this -> Session -> setFlash(__('Registro Exitoso'));
+					// Asignar el error para llevar a la vista
+					echo 'ERROR';
+					$error = $resp -> error;
 				}
-				$this -> redirect('/');
-			} else {
-				$this -> Session -> setFlash(__('Falló el registro. Verifique los datos e intente de nuevo.'));
 			}
 		}
+		
+		$this -> set(compact('error', 'public_key'));
 	}
 	
 	/**
