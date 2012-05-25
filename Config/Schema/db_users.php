@@ -195,6 +195,26 @@ class DbUsersSchema extends CakeSchema {
 				'role_id' => 1
 			)
 		);
+		
+		fwrite(STDOUT, "\n¿Usar email como username?\n[n] > "); // Output - prompt user
+		$answer = trim(fgets(STDIN));
+		
+		$pedirInput = true;
+		
+		do {
+			fwrite(STDOUT, "\n¿Usar email como username?\n[n] > "); // Output - prompt user
+			$answer = fgets(STDIN);
+			$answer = trim($answer);
+			$answer = strtolower($answer);
+			if(strlen($answer) == 0) {
+				$pedirInput = false;
+			} elseif($answer == 'y' || $answer == 'n') {
+				$pedirInput = false;
+			}			
+		} while($pedirInput);
+		
+		if($answer == 'y') { $usuario['User']['username'] = $usuario['User']['email']; }
+		
 		$this -> User -> save($usuario);
 		
 		// tratando de arreglar lo del alias en la tabla aros
