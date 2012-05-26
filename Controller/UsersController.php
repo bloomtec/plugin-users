@@ -27,7 +27,7 @@ class UsersController extends UserControlAppController {
 				)
 			)
 		);
-		$this -> Auth -> allow('register');
+		$this -> Auth -> allow('register', 'logout');
 	}
 
 	/**
@@ -155,50 +155,73 @@ class UsersController extends UserControlAppController {
 		/**
 		 * Llevar un registro de cuantos inicios de sesión se tienen
 		 */
-		$login_attempts = $this -> Session -> read('login_attemps');
+		$login_attempts = $this -> Cookie -> read('User.login_attempts');
 		if(!$login_attempts) {
 			$login_attempts = 1;
+			$this -> Cookie -> write('User.login_attempts', $login_attempts);
+			$login_attempts = $this -> Cookie -> read('User.login_attempts');
 		}
-		$this -> Session -> write('login_attempts', 1);
 		
-		/**
-		 * Sección ReCaptcha
-		 */
-		 
-		// ReCaptcha Lib
-		$lib_path = APP . 'Plugin/UserControl/Lib/ReCaptcha/recaptchalib.php';
-		require_once ($lib_path);
-		
+		// Variable que contiene el error del captcha
 		$error = null;
 		
-		/**
-		 * Fin sección ReCaptcha
-		 */
-		
-		if ($this -> request -> is('post')) {
-			// was there a reCAPTCHA response?
-			if (isset($_POST['recaptcha_challenge_field']) && isset($_POST['recaptcha_response_field'])) {
-				$resp = recaptcha_check_answer(
-					$this -> private_key, $_SERVER["REMOTE_ADDR"],
-					$_POST['recaptcha_challenge_field'],
-					$_POST['recaptcha_response_field']
-				);
-				
-				// Verificar la respuesta de ReCaptcha
-				if ($resp -> is_valid) {
-					if ($this -> Auth -> login($this -> request -> data)) {
-						return $this -> redirect($this -> Auth -> redirect());
-						$this -> Session -> setFlash(__('Has iniciado sesión.'), 'default', array(), 'auth');
+		if(!$login_attempts || $login_attempts > 3) {
+			/**
+			 * Sección ReCaptcha
+			 */
+			 
+			// ReCaptcha Lib
+			$lib_path = APP . 'Plugin/UserControl/Lib/ReCaptcha/recaptchalib.php';
+			require_once ($lib_path);
+			
+			/**
+			 * Fin sección ReCaptcha
+			 */
+			
+			if ($this -> request -> is('post')) {
+				// was there a reCAPTCHA response?
+				if (isset($_POST['recaptcha_challenge_field']) && isset($_POST['recaptcha_response_field'])) {
+					$resp = recaptcha_check_answer(
+						$this -> private_key, $_SERVER["REMOTE_ADDR"],
+						$_POST['recaptcha_challenge_field'],
+						$_POST['recaptcha_response_field']
+					);
+					
+					// Verificar la respuesta de ReCaptcha
+					if ($resp -> is_valid) {
+						if($this -> request -> is('post')) {
+							if ($this -> Auth -> login()) {
+								$this -> Cookie -> delete('User.login_attempts');
+								return $this -> redirect($this -> Auth -> redirect());
+								$this -> Session -> setFlash(__('Has iniciado sesión.'), 'default', array(), 'auth');
+							} else {
+								$login_attempts += 1;
+								$this -> Cookie -> write('User.login_attempts', $login_attempts);
+								$this -> Session -> setFlash(__('Usuario o contraseña incorrectos.'), 'default', array(), 'auth');
+							}
+						}
 					} else {
-						$this -> Session -> setFlash(__('Usuario o contraseña incorrectos.'), 'default', array(), 'auth');
+						// Asignar el error para llevar a la vista
+						$this -> Session -> setFlash(__('Debes ingresar los datos correctos al captcha'));
+						$error = $resp -> error;
 					}
+				}
+			}
+		} else {
+			if($this -> request -> is('post')) {
+				if ($this -> Auth -> login()) {
+					$this -> Cookie -> delete('User.login_attempts');
+					return $this -> redirect($this -> Auth -> redirect());
+					$this -> Session -> setFlash(__('Has iniciado sesión.'), 'default', array(), 'auth');
 				} else {
-					// Asignar el error para llevar a la vista
-					$this -> Session -> setFlash(__('Debes ingresar los datos correctos al captcha'));
-					$error = $resp -> error;
+					$login_attempts += 1;
+					$this -> Cookie -> write('User.login_attempts', $login_attempts);
+					$this -> Session -> setFlash(__('Usuario o contraseña incorrectos.'), 'default', array(), 'auth');
 				}
 			}
 		}
+		
+		$this -> set('login_attempts', $login_attempts);
 		$this -> set('error', $error);
 		$this -> set('public_key', $this -> public_key);
 	}

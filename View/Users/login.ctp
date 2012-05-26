@@ -3,8 +3,8 @@
 	<fieldset>
 		<div class="campos">
 			<legend><?php echo __('Inicio De Sesión'); ?></legend>
-			<?php echo $this -> Form -> input('username', array('label' => 'Nombre De Usuario', 'required' => 'required'));?>
-			<?php echo $this -> Form -> input('password', array('label' => 'Contraseña', 'type' => 'password', 'required' => 'required'));?>
+			<?php echo $this -> Form -> input('username', array('label' => 'Nombre De Usuario', 'value' => '', 'required' => 'required'));?>
+			<?php echo $this -> Form -> input('password', array('label' => 'Contraseña', 'value' => '', 'required' => 'required'));?>
 			</div>
 		<div class="captcha">
 			<div id="recaptcha_div">
@@ -12,6 +12,11 @@
 		</div>
 	</fieldset>
 	<div style='clear:both;'></div>
+<?php if($login_attempts <= 3) : ?>
+	<?php echo $this -> Form -> submit('Iniciar Sesión'); ?>
+</div>
+<?php endif; ?>
+<?php if($login_attempts > 3) : ?>
 	<div class="submit">
 			<input id="SubmitButton" type="button" value="<?php echo __('Iniciar Sesión'); ?>">
 		</div>
@@ -41,3 +46,4 @@
 		});
 	});
 </script>
+<?php endif; ?>
