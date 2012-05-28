@@ -278,6 +278,27 @@ class DbUsersSchema extends CakeSchema {
 			'actives' => array('column' => 'is_active'),
 		)
 	);
+	
+	public $user_addresses = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+		'user_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'index'),
+		'name' => array('type' => 'string', 'null' => false, 'default' => 'default', 'length' => 100, 'key' => 'index'),
+		'country' => array('type' => 'string', 'null' => false, 'length' => 100, 'key' => 'index'),
+		'state' => array('type' => 'string', 'null' => false, 'length' => 100, 'key' => 'index'),
+		'city' => array('type' => 'string', 'null' => false, 'length' => 100, 'key' => 'index'),
+		'address' => array('type' => 'text', 'null' => false),
+		'phone' => array('type' => 'string', 'null' => false, 'length' => 100, 'key' => 'index'),
+		'created' => array('type' => 'datetime', 'null' => true),
+		'updated' => array('type' => 'datetime', 'null' => true),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'names' => array('column' => 'name'),
+			'countries' => array('column' => 'country'),
+			'states' => array('column' => 'state'),
+			'cities' => array('column' => 'city'),
+			'phones' => array('column' => 'phone')
+		)
+	);
 
 	public $acos = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),

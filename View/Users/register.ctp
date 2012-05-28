@@ -13,6 +13,7 @@ h1{
 	<h2 class='rosa'>Nuevos Clientes PriceShoes</h2>
 		<p>Compartiendo tus datos básicos con nosotros, no sólo te actualizaremos con lo último de <span>Price Shoes</span> sino que seras uno de los primero en enterarte de una gran variedad de ofertas y promociones, ademas al crear una cuenta en nuestra tienda, podrás moverse a través del proceso de pago más rápido, registrar tus direcciones para envíos, guardar, ver y comparar tus favoritos.</p>
 		<?php echo $this -> Form->create("User",array("action"=>"register","controller"=>"users"));?>
+		<!--<fieldset>-->
 			<div class="email">
 				<label for="UserFieldEmail">Dirección E-mail<br>(Este será tu usuario en <span>PriceShoes.com.co</span>)</label>
 				<input id="Correos eléctronicos" type="email" required="required" minlength="9" name="data[User][email]" id="Correos eléctronicos">
@@ -46,22 +47,23 @@ h1{
 					<div style="clear:both"></div>
 				</div>
 			<h2 class='rosa' style='clear:both;'>Direccion Principal</h2>
-			<?php echo $this -> Form->input("Address.country",array("label"=>"País de Residencia",'required'=>'required'));?>
-			<?php echo $this -> Form->input("Address.department",array("label"=>"Departamento",'required'=>'required'));?>
-			<?php echo $this -> Form->input("Address.city",array("label"=>"Ciudad de Residencia",'required'=>'required'));?>
-			<?php echo $this -> Form->input("Address.address",array("label"=>"Dirección",'required'=>'required'));?>
-			<?php echo $this -> Form->input("Address.phone",array("label"=>"Teléfono"));?>			
+			<?php echo $this -> Form->input("UserAddress.country",array("label"=>"País",'required'=>'required'));?>
+			<?php echo $this -> Form->input("UserAddress.state",array("label"=>"Departamento",'required'=>'required'));?>
+			<?php echo $this -> Form->input("UserAddress.city",array("label"=>"Ciudad",'required'=>'required'));?>
+			<?php echo $this -> Form->input("UserAddress.phone",array("label"=>"Teléfono"));?>
+			<?php echo $this -> Form->input("UserAddress.address",array("label"=>"Dirección",'required'=>'required', 'type' => 'textarea', 'style' => 'min-width:345px;'));?>
 			<div style="clear:both"></div>
 			<p>Al hacer click en el botón “Crear mi cuenta” a continuación, certifico que he leído y que acepto las <span> <?php echo $this -> Html->link("Condiciones de Servicio y Políticas de Privacidad de PriceShoes.com.co",array("controller"=>"pages","action"=>"view","condiciones"),array("target"=>"_BLANK"));?></span>, aceptando recibir comunicaciones electrónicas procedentes de <span><?php echo $this -> Html->link("PriceShoes.com.co","/",array("target"=>"_BLANK"));?></span>, relacionadas con mi cuenta.</p>
 			<div class="captcha">
 				<div id="recaptcha_div">
 				</div>
-				<style>#recaptcha_response_field {max-height: 20px;}</style>
+				<style>#recaptcha_response_field {max-height:45%; max-width:98%;}</style>
 			</div>
 			<br />
-			<?php echo $this -> Form->submit(__('Registrarme', true));?> 
+			<?php echo $this -> Form->submit(__('Registrarme', true));?>
 			<?php echo $this -> Form -> input('captcha_error', array('value' => $error, 'div' => false, 'label' => false, 'style' => 'visibility:hidden;')); ?>
 			<?php echo $this -> Form -> end();?>
+		<!--</fieldset>-->
 	<div style="clear:both;"></div>
 </div>
 <script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
