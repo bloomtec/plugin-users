@@ -1,13 +1,4 @@
-<style>
-h1{
-	font-size:21px;
-	font-weight:normal;
-	margin-bottom: 15px;
-}
-.form{
-	padding:40px;
-}
-</style>
+<?php echo $this -> Html -> css('datepicker'); ?>
 <div class="black-wrapper form registro">
 	<h1>CREA UNA CUENTA</h1>
 	<h2 class='rosa'>Nuevos Clientes PriceShoes</h2>
@@ -31,7 +22,7 @@ h1{
 				<?php
 			    	$options=array('cedula'=>'Cédula','extranjera'=>'C/Extranjería','pasaporte'=>'Pasaporte');
 			    	$attributes=array('legend'=>'Identificación','default' => 'cedula');
-			    	echo $this->Form->radio('tipo_identificacion',$options);
+			    	echo $this->Form->radio('tipo_identificacion',$options,array('value'=>'cedula'));
 				?>
 		    	<div style="clear:both"></div>
 		    	<?php echo $this -> Form->input("document",array("label"=>false,'required'=>'required'));?>
@@ -43,7 +34,8 @@ h1{
 				<div class="calendario">
 					<br />
 					<label>Fecha Nacimiento</label>
-					<input class="date" type="date" min="1950-01-01" required="required" name="data[User][birthday]">
+					<input class="date" type="date"  required="required" name="data[User][birthday]">
+					
 					<div style="clear:both"></div>
 				</div>
 			<h2 class='rosa' style='clear:both;'>Direccion Principal</h2>
@@ -51,27 +43,27 @@ h1{
 			<?php echo $this -> Form->input("UserAddress.state",array("label"=>"Departamento",'required'=>'required'));?>
 			<?php echo $this -> Form->input("UserAddress.city",array("label"=>"Ciudad",'required'=>'required'));?>
 			<?php echo $this -> Form->input("UserAddress.phone",array("label"=>"Teléfono"));?>
+			<div style="clear:both"></div>
 			<?php echo $this -> Form->input("UserAddress.address",array("label"=>"Dirección",'required'=>'required', 'type' => 'textarea', 'style' => 'min-width:345px;'));?>
 			<div style="clear:both"></div>
-			<p>Al hacer click en el botón “Crear mi cuenta” a continuación, certifico que he leído y que acepto las <span> <?php echo $this -> Html->link("Condiciones de Servicio y Políticas de Privacidad de PriceShoes.com.co",array("controller"=>"pages","action"=>"view","condiciones"),array("target"=>"_BLANK"));?></span>, aceptando recibir comunicaciones electrónicas procedentes de <span><?php echo $this -> Html->link("PriceShoes.com.co","/",array("target"=>"_BLANK"));?></span>, relacionadas con mi cuenta.</p>
+			<p>Al hacer click en el botón “Crear mi cuenta” a continuación, certifico que he leído y que acepto las <span> <?php echo $this -> Html->link("Condiciones de Servicio y Políticas de Privacidad de PriceShoes.com.co",array("controller"=>"pages","action"=>"view","condiciones"),array("target"=>"_BLANK",'class'=>'rosa'));?></span>, aceptando recibir comunicaciones electrónicas procedentes de <span><?php echo $this -> Html->link("PriceShoes.com.co","/",array("target"=>"_BLANK",'class'=>'rosa'));?></span>, relacionadas con mi cuenta.</p>
 			<div class="captcha">
 				<div id="recaptcha_div">
 				</div>
 				<style>#recaptcha_response_field {max-height:45%; max-width:98%;}</style>
 			</div>
-			<br />
-			<?php echo $this -> Form->submit(__('Registrarme', true));?>
+		
+			<?php echo $this -> Form->submit(__('Crear mi cueta', true),array('class'=>'big-button'));?>
 			<?php echo $this -> Form -> input('captcha_error', array('value' => $error, 'div' => false, 'label' => false, 'style' => 'visibility:hidden;')); ?>
 			<?php echo $this -> Form -> end();?>
 		<!--</fieldset>-->
 	<div style="clear:both;"></div>
 </div>
 <script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
-<?php echo $this -> Html -> script('common'); ?>
 <script type="text/javascript">
 	$(function(){
 		// Asignar validator al form
-		$('#UserRegisterForm').validator({ lang: 'es' });
+		$('#UserRegisterForm').validator({ lang: 'es', position:"bottom left"});
 		
 		Recaptcha.create("<?php echo $public_key; ?>", 'recaptcha_div', {
 			theme :"white",
@@ -84,6 +76,17 @@ h1{
 				}
 			}
 		});
-		
+	$(":date").dateinput({
+		lang: 'es',
+		trigger: true, 
+		yearRange: [-90,-10] ,
+		format: 'yyyy-mm-dd',	// the format displayed for the user
+		selectors: true,             	// whether month/year dropdowns are shown
+		offset: [0, 0],            	// tweak the position of the calendar
+		speed: 'fast',               	// calendar reveal speed
+		firstDay: 1                  	// which day starts a week. 0 = sunday, 1 = monday etc..
+    });
+	
+	
 	});
 </script>
