@@ -160,10 +160,13 @@ class UsersController extends UserControlAppController {
 	 */
 	public function admin_view($id = null) {
 		$this -> User -> id = $id;
+		$this -> User -> recursive = 1;
 		if (!$this -> User -> exists()) {
 			throw new NotFoundException(__('Usuario no válido'));
 		}
-		$this -> set('user', $this -> User -> read(null, $id));
+		$user = $this -> User -> read(null, $id);
+		debug($user);
+		$this -> set('user', $user);
 	}
 
 	/**
@@ -346,11 +349,18 @@ class UsersController extends UserControlAppController {
 					}
 					$clientRole = $this -> User -> Role -> find('first', array('order' => array('id' => 'DESC'), 'recursive' => -1));
 					$this -> request -> data['User']['role_id'] = $clientRole['Role']['id'];
+					$user = array('User' => $this -> request -> data['User']);
+					$address = array('UserAddress' => $this -> request -> data['UserAddress']);
 					$this -> User -> create();
-					if ($this -> User -> save($this -> request -> data)) {
+					if ($this -> User -> save($user)) {
 						$user_id = $this -> User -> id;
 						$user_alias = $this -> request -> data['User']['username'];
 						$this -> User -> query("UPDATE `aros` SET `alias`='$user_alias' WHERE `model`='User' AND `foreign_key`=$user_id");
+						
+						$address['UserAddress']['user_id'] = $user_id;
+						
+						$this -> User -> UserAddress -> create();
+						$this -> User -> UserAddress -> save($address);
 						
 						// Enviar el correo de registro
 						$result = $this -> sendRegistrationEmail($this -> request -> data);
@@ -370,6 +380,7 @@ class UsersController extends UserControlAppController {
 				}
 			}
 		}
+		$this -> set('documentTypes', $this -> User -> DocumentType -> find('list', array('order' => array('id' => 'ASC'))));
 		$this -> set('error', $error);
 		$this -> set('public_key', $this -> public_key);
 	}

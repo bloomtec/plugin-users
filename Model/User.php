@@ -12,6 +12,10 @@ class User extends UserControlAppModel {
 	
 	public $displayField = 'username';
 	
+	public $virtualFields = array(
+		'full_name' => 'CONCAT(name, " ", lastname)'
+	);
+	
 	/**
 	 * Validation rules
 	 *
@@ -179,8 +183,36 @@ class User extends UserControlAppModel {
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
+		),
+		'DocumentType' => array(
+			'className' => 'UserControl.DocumentType',
+			'foreignKey' => 'document_type_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
 		)
-	);	
+	);
+	
+	/**
+	 * hasMany associations
+	 *
+	 * @var array
+	 */	
+	public $hasMany = array(
+		'UserAddress' => array(
+			'className' => 'UserControl.UserAddress',
+			'foreignKey' => 'user_id',
+			'dependent' => true,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		)
+	);
 	
 	/**
 	 * ACL method

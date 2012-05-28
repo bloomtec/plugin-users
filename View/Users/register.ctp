@@ -5,39 +5,27 @@
 		<p>Compartiendo tus datos básicos con nosotros, no sólo te actualizaremos con lo último de <span>Price Shoes</span> sino que seras uno de los primero en enterarte de una gran variedad de ofertas y promociones, ademas al crear una cuenta en nuestra tienda, podrás moverse a través del proceso de pago más rápido, registrar tus direcciones para envíos, guardar, ver y comparar tus favoritos.</p>
 		<?php echo $this -> Form->create("User",array("action"=>"register","controller"=>"users"));?>
 		<!--<fieldset>-->
-			<div class="email">
-				<label for="UserFieldEmail">Dirección E-mail<br>(Este será tu usuario en <span>PriceShoes.com.co</span>)</label>
-				<input id="Correos eléctronicos" type="email" required="required" minlength="9" name="data[User][email]" id="Correos eléctronicos">
-			</div>
-			
-			<div class="email">
-				<label for="UserFieldEmail-repetir"><br>Escriba de nuevo tu dirección E-mail</label>
-				<input id="UserFieldEmail-repetir" type="email" required="required" minlength="9" name="data[User][verify_email]" data-equals="data[User][email]">
-			</div>
-			<?php echo $this -> Form->input("password",array('type'=>'password','div' => 'password ',"label"=>"Contraseña",'required'=>'required'));?>
-			<?php echo $this -> Form->input("verify_password",array('type'=>'password','div' => 'password ',"label"=>"Escribe de nuevo tu contraseña",'required'=>'required','data-equals'=>"data[User][password]"));?>
-			<?php echo $this -> Form->input("name",array('div' => 'input',"label"=>"Escribe tu (s) Nombre (s)",'required'=>'required'));?>
-			<?php echo $this -> Form->input("lastname",array('div' => 'input',"label"=>"Escribe tu (s) Apellido (s)",'required'=>'required'));?>
+			<?php echo $this -> Form -> input('email', array('label' => 'Dirección E-mail<br>(Este será tu usuario en <span>PriceShoes.com.co</span>)', 'type' => 'email', 'required' => 'required')); ?>
+			<?php echo $this -> Form -> input('verify_email', array('label' => '<br />Escribe de nuevo tu dirección E-mail', 'type' => 'email', 'required' => 'required', 'data-equals' => 'data[User][email]')); ?>
+			<?php echo $this -> Form -> input('password',array('type'=>'password','div' => 'password ',"label"=>"Contraseña",'required'=>'required'));?>
+			<?php echo $this -> Form -> input('verify_password',array('type'=>'password','div' => 'password ',"label"=>"Escribe de nuevo tu contraseña",'required'=>'required','data-equals'=>"data[User][password]"));?>
+			<?php echo $this -> Form -> input('name',array('div' => 'input',"label"=>"Escribe tu (s) Nombre (s)",'required'=>'required'));?>
+			<?php echo $this -> Form -> input('lastname',array('div' => 'input',"label"=>"Escribe tu (s) Apellido (s)",'required'=>'required'));?>
 			<div class="input">
-				<?php
-			    	$options=array('cedula'=>'Cédula','extranjera'=>'C/Extranjería','pasaporte'=>'Pasaporte');
-			    	$attributes=array('legend'=>'Identificación','default' => 'cedula');
-			    	echo $this->Form->radio('tipo_identificacion',$options,array('value'=>'cedula'));
-				?>
+				<?php echo $this -> Form -> radio('document_type_id', $documentTypes, array('value' => 1, 'legend' => 'Tipo De Identificación')); ?>
 		    	<div style="clear:both"></div>
-		    	<?php echo $this -> Form->input("document",array("label"=>false,'required'=>'required'));?>
+		    	<?php echo $this -> Form->input('document', array("label"=>false,'required'=>'required'));?>
 	    	</div>
-				<div class="sexo">
+    		<div class="input sexo">
+			<br />
+    		<?php echo $this -> Form->input('sex', array("div"=>false,'label'=>'Sexo','required'=>'required','options' => array('0'=>'Femenino','1'=>'Masculino'))); ?>
+			</div>
+			<div class="input calendario">
 				<br />
-	    		<?php echo $this -> Form->input('sex', array("div"=>false,'label'=>'Sexo','required'=>'required','options' => array('F'=>'Femenino','M'=>'Masculino'))); ?>
-				</div>
-				<div class="calendario">
-					<br />
-					<label>Fecha Nacimiento</label>
-					<input class="date" type="date"  required="required" name="data[User][birthday]">
-					
-					<div style="clear:both"></div>
-				</div>
+				<label>Fecha De Nacimiento</label>
+				<input class="date" type="date" name="data[User][birthday]">					
+				<div style="clear:both"></div>
+			</div>
 			<h2 class='rosa' style='clear:both;'>Direccion Principal</h2>
 			<?php echo $this -> Form->input("UserAddress.country",array("label"=>"País",'required'=>'required'));?>
 			<?php echo $this -> Form->input("UserAddress.state",array("label"=>"Departamento",'required'=>'required'));?>
@@ -62,6 +50,7 @@
 <script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
 <script type="text/javascript">
 	$(function(){
+		
 		// Asignar validator al form
 		$('#UserRegisterForm').validator({ lang: 'es', position:"bottom left"});
 		
@@ -76,17 +65,17 @@
 				}
 			}
 		});
-	$(":date").dateinput({
-		lang: 'es',
-		trigger: true, 
-		yearRange: [-90,-10] ,
-		format: 'yyyy-mm-dd',	// the format displayed for the user
-		selectors: true,             	// whether month/year dropdowns are shown
-		offset: [0, 0],            	// tweak the position of the calendar
-		speed: 'fast',               	// calendar reveal speed
-		firstDay: 1                  	// which day starts a week. 0 = sunday, 1 = monday etc..
-    });
-	
+		
+		$(":date").dateinput({
+			lang: 'es',
+			trigger: true, 
+			yearRange: [-90,-10] ,
+			format: 'yyyy-mm-dd',	// the format displayed for the user
+			selectors: true,             	// whether month/year dropdowns are shown
+			offset: [0, 0],            	// tweak the position of the calendar
+			speed: 'fast',               	// calendar reveal speed
+			firstDay: 1                  	// which day starts a week. 0 = sunday, 1 = monday etc..
+	    });
 	
 	});
 </script>
