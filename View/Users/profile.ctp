@@ -1,4 +1,4 @@
-<div class="users view">
+<div class="users profile">
 <h2><?php  echo __('User');?></h2>
 	<dl>
 		<dt><?php echo __('Id'); ?></dt>

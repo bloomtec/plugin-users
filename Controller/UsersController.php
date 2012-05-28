@@ -31,15 +31,14 @@ class UsersController extends UserControlAppController {
 	}
 
 	/**
-	 * view method
+	 * profile method
 	 *
-	 * @param string $id
 	 * @return void
 	 */
-	public function view($id = null) {
-		$this -> User -> id = $id;
+	public function profile() {
+		$this -> User -> id = $this -> Auth -> user('id');
 		if (!$this -> User -> exists()) {
-			throw new NotFoundException(__('Invalid user'));
+			throw new NotFoundException(__('Usuario no válido'));
 		}
 		$this -> set('user', $this -> User -> read(null, $id));
 	}
@@ -53,7 +52,7 @@ class UsersController extends UserControlAppController {
 	public function edit($id = null) {
 		$this -> User -> id = $id;
 		if (!$this -> User -> exists()) {
-			throw new NotFoundException(__('Invalid user'));
+			throw new NotFoundException(__('Usuario no válido'));
 		}
 		if ($this -> request -> is('post') || $this -> request -> is('put')) {
 			if ($this -> User -> save($this -> request -> data)) {
@@ -88,7 +87,7 @@ class UsersController extends UserControlAppController {
 	public function admin_view($id = null) {
 		$this -> User -> id = $id;
 		if (!$this -> User -> exists()) {
-			throw new NotFoundException(__('Invalid user'));
+			throw new NotFoundException(__('Usuario no válido'));
 		}
 		$this -> set('user', $this -> User -> read(null, $id));
 	}
@@ -102,7 +101,7 @@ class UsersController extends UserControlAppController {
 	public function admin_edit($id = null) {
 		$this -> User -> id = $id;
 		if (!$this -> User -> exists()) {
-			throw new NotFoundException(__('Invalid user'));
+			throw new NotFoundException(__('Usuario no válido'));
 		}
 		if ($this -> request -> is('post') || $this -> request -> is('put')) {
 			if ($this -> User -> save($this -> request -> data)) {
