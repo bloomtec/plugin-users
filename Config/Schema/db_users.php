@@ -273,24 +273,30 @@ class DbUsersSchema extends CakeSchema {
 			$path = null;
 			$alias = $role['Role']['role'];
 			if($role['Role']['id'] == 1) {
+				// Permitirle acceso total al admin
 				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias controllers";
+				exec($path);
 			} else {
+				// Negar inicialmente acceso a todo a los demás usuarios
 				$path = APP . 'Console/cake -app ' . APP . " acl deny $alias controllers";
+				exec($path);
+				// Permitir acceso a logout
+				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias logout";
+				exec($path);
+				// Permitir acceso al perfil (profile)
+				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias profile";
+				exec($path);
+				// Permitir acceso a edit
+				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias edit";
+				exec($path);
+				// Permitir acceso a edit
+				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias addresses";
+				exec($path);
+				// Permitir acceso a edit
+				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias editPassword";
+				exec($path);
 			}
-			exec($path);
 		}
-		/*foreach($roles as $data) {
-			$path = null;
-			$alias = $data['alias']; 
-			if($alias == 'administrator') {
-				//$this -> Acl -> allow($data['alias'], 'controllers');
-				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias controllers";
-			} else {
-				//$this -> Acl -> deny($data['alias'], 'controllers');
-				$path = APP . 'Console/cake -app ' . APP . " acl deny $alias controllers";
-			}
-			exec($path);
-		}*/
 	}
 	
 	public $roles = array(
