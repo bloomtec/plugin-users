@@ -38,7 +38,7 @@
 					
 					<div style="clear:both"></div>
 				</div>
-			<h2 class='rosa' style='clear:both;'>Direccion Principal</h2>
+			<h2 class='rosa' style='clear:both; margin-bottom:20px;'>Direccion Principal</h2>
 			<?php echo $this -> Form->input("UserAddress.country",array("label"=>"País",'required'=>'required'));?>
 			<?php echo $this -> Form->input("UserAddress.state",array("label"=>"Departamento",'required'=>'required'));?>
 			<?php echo $this -> Form->input("UserAddress.city",array("label"=>"Ciudad",'required'=>'required'));?>
