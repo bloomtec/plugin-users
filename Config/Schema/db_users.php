@@ -333,7 +333,9 @@ class DbUsersSchema extends CakeSchema {
 		'name' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
 		'lastname' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
 		'password' => array('type' => 'string', 'null' => false, 'length' => 40),
-		'is_active' => array('type' => 'boolean', 'null' => false, 'length' => 1, 'default' => 1, 'key' => 'index'),
+		'birthday' => array('type' => 'date', 'null' => false),
+		'sex' => array('type' => 'boolean', 'null' => false, 'default' => 1, 'key' => 'index'),
+		'is_active' => array('type' => 'boolean', 'null' => false, 'default' => 1, 'key' => 'index'),
 		'created' => array('type' => 'datetime', 'null' => true),
 		'updated' => array('type' => 'datetime', 'null' => true),
 		'indexes' => array(

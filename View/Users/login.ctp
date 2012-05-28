@@ -1,33 +1,43 @@
-<div class='login'>
-	<?php echo $this -> Form -> create('User', array('action' => 'login'));?>
-	<fieldset>
-		<div class="campos">
-			<legend><?php echo __('Inicio De Sesión'); ?></legend>
-			<?php echo $this -> Form -> input('username', array('label' => 'Nombre De Usuario', 'value' => '', 'required' => 'required'));?>
-			<?php echo $this -> Form -> input('password', array('label' => 'Contraseña', 'value' => '', 'required' => 'required'));?>
-			</div>
-		<div class="captcha">
-			<div id="recaptcha_div">
+<div class='form black-wrapper login'>
+		<h1>INICIA SESIÓN O CREA UNA CUENTA</h1>
+		<div class="izquierda">
+			<h2 class='rosa'>Nuevos Clientes PriceShoes</h2>
+			<p>Al crear una cuenta en nuestra tienda, usted será podrá moverse a través del proceso de pago más rápido, guardar múltiples direcciones para sus envíos, ver y guardar sus favoritos y mas.</p>
+			<div class="cuadro-formularios">
+				<?php echo $this -> Html->link('Crear',array("controller"=>"users","action"=>"register"), array("class"=>"button"));?>
+				<div style="clear:both;"></div>
 			</div>
 		</div>
-	</fieldset>
-	<div style='clear:both;'></div>
-<?php if($login_attempts <= 3) : ?>
-	<?php echo $this -> Form -> submit('Iniciar Sesión'); ?>
+		<div class="derecha">
+			<h2 class='rosa'>Clientes PriceShoes</h2>
+			<?php echo $this -> Form->create("User",array("action"=>"login","controller"=>"users"));?>
+			<p>Sí ya dispone de una cuenta con nosotros por favor ingrese sus datos.</p>
+				<?php echo $this -> Form->input("email",array('div' => 'email-login',"label"=>"Dirección E-mail"));?>
+				<?php echo $this -> Form->input("password",array('div' => 'password-login',"label"=>"Contraseña"));?>
+				<div style="clear:both"></div>
+				<div class="captcha">
+					<div id="recaptcha_div">
+					</div>
+					<div style="clear:both;"></div>
+				</div>
+				 <div style="clear:both;"></div>
+				<div class="cuadro-formularios">
+	            <?php echo $this -> Html->link('¿Olvidó su contraseña?',array("controller"=>"users","action"=>"olvidar"), array("class"=>"rosa"));?>  
+	            <?php echo $this -> Form -> submit(__('Ingresar', true));?> 
+	            <div style="clear:both;"></div>
+				</div>
+				<?php $login_attempts=4; if($login_attempts > 3) : ?>
+					<?php echo $this -> Form -> input('captcha_error', array('value' => $error, 'div' => false, 'label' => false, 'style' => 'visibility:hidden;')); ?>
+				<?php endif;?>
+				<div style="clear:both;"></div>
+				<?php echo $this -> Form -> end(); ?>				
+		</div>
+		<div style="clear:both;"></div>
 </div>
-<?php endif; ?>
 <?php if($login_attempts > 3) : ?>
-	<div class="submit">
-			<input id="SubmitButton" type="button" value="<?php echo __('Iniciar Sesión'); ?>">
-		</div>
-		<?php echo $this -> Form -> input('captcha_error', array('value' => $error, 'div' => false, 'label' => false, 'style' => 'visibility:hidden;')); ?>
-	</form>
-</div>
 <script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
-<?php echo $this -> Html -> script('jquery.min'); ?>
 <script type="text/javascript">
-	$(function(){
-		
+	$(function(){	
 		Recaptcha.create("<?php echo $public_key; ?>", 'recaptcha_div', {
 			theme : "white",
 			lang : 'es',
@@ -39,11 +49,10 @@
 				}
 			}
 		});
-		
-		/* Manejar el submit */
+		/* Manejar el submit 
 		$('#SubmitButton').click(function() {
 			$('#UserLoginForm').submit();
-		});
+		});*/
 	});
 </script>
-<?php endif; ?>
+<?php endif;?>
