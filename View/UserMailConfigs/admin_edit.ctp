@@ -24,24 +24,28 @@
 				<?php foreach ($this -> data['MailingList'] as $key => $mailing_list) : ?>
 				<tr>
 					<?php echo $this -> Form -> input("MailingList.$key.id", array('value' => $mailing_list['id'])); ?>
-					<td class="list-name">
-						<?php echo $this -> Form -> input("MailingList.$key.list_name", array('label' => __('Nombre De La Lista', true))); ?>
+					<td class="scenario">
+						<?php echo $this -> Form -> input("MailingList.$key.scenario", array('label' => __('Escenario De Envío', true), 'disabled' => true)); ?>
 					</td>
-					<td class="list-id">
-						<?php echo $this -> Form -> input("MailingList.$key.list_id", array('label' => __('ID De La Lista', true), 'type' => 'text')); ?>
+					<td class="list-unique-code">
+						<?php echo $this -> Form -> input("MailingList.$key.list_unique_code", array('label' => __('Código De La Lista', true), 'type' => 'text')); ?>
+					</td>
+					<td class="campaign-unique-code">
+						<?php echo $this -> Form -> input("MailingList.$key.campaign_unique_code", array('label' => __('Código De La Campaña', true), 'type' => 'text')); ?>
 					</td>
 				</tr>
 				<?php endforeach; ?>
 			</tbody>
-		</table>		
+		</table>
 	</fieldset>
 	<?php echo $this -> Form -> end(__('Modificar')); ?>
 </div>
 <style>
-	form#UserMailConfigAdminEditForm {margin-left:auto; margin-right:auto; max-width:640px; padding:20px;}
+	form#UserMailConfigAdminEditForm {padding:20px;}
+	table#MailServices td input {text-align:center;}
+	table#MailServices td.key input {width:300px;}
 	table#MailServices td, table#MailingLists td {padding:5px;}
-	table#MailServices td.service {}
-	table#MailServices td.key {}
-	table#MailServices td.key input {text-align:center; width:300px;}
-	table#MailServices td.active {}
+	table#MailServices, table#MailingLists {margin-left:auto; margin-right:auto;}
+	table#MailingLists td label, table#MailingLists td input {max-width:300px;}
+	table#MailingLists td input {text-align:center;}
 </style>

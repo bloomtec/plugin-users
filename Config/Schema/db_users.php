@@ -44,9 +44,9 @@ class DbUsersSchema extends CakeSchema {
 					$MailService = ClassRegistry::init('MailService');
 					$MailService -> create();
 	                $MailService -> save(
-	                    array('MailService' =>
-	                        array(
-	                        	'name' => 'MailChimp'
+	                	array(
+	                		'MailService' => array(
+	                			'name' => 'MailChimp'
 							)
 	                    )
 	                );
@@ -56,18 +56,51 @@ class DbUsersSchema extends CakeSchema {
 					$mail_configs = $UserMailConfig -> find('all');
 	                $MailingList = ClassRegistry::init('MailingList');
 					foreach($mail_configs as $mail_config) {
-						for ($i=0; $i < 5; $i++) { 
-							$MailingList -> create();
-			                $MailingList -> save(
-			                    array('MailingList' =>
-			                        array(
-			                        	'user_mail_config_id' => $mail_config['UserMailConfig']['id'],
-			                        	'list_name' => '',
-			                        	'list_id' => ''
-									)
-			                    )
-			                );
-						}	
+						$MailingList -> create();
+		                $MailingList -> save(
+		                    array(
+		                    	'MailingList' => array(
+		                        	'user_mail_config_id' => $mail_config['UserMailConfig']['id'],
+		                        	'scenario' => 'Registro De Usuario'
+								)
+		                    )
+		                );
+						$MailingList -> create();
+		                $MailingList -> save(
+		                    array(
+		                    	'MailingList' => array(
+		                        	'user_mail_config_id' => $mail_config['UserMailConfig']['id'],
+		                        	'scenario' => 'Agradecimiento Compra'
+								)
+		                    )
+		                );
+						$MailingList -> create();
+		                $MailingList -> save(
+		                    array(
+		                    	'MailingList' => array(
+		                        	'user_mail_config_id' => $mail_config['UserMailConfig']['id'],
+		                        	'scenario' => 'Confirmar Orden'
+								)
+		                    )
+		                );
+						$MailingList -> create();
+		                $MailingList -> save(
+		                    array(
+		                    	'MailingList' => array(
+		                        	'user_mail_config_id' => $mail_config['UserMailConfig']['id'],
+		                        	'scenario' => 'Orden Rechazada'
+								)
+		                    )
+		                );
+						$MailingList -> create();
+		                $MailingList -> save(
+		                    array(
+		                    	'MailingList' => array(
+		                        	'user_mail_config_id' => $mail_config['UserMailConfig']['id'],
+		                        	'scenario' => 'Recordar Contraseña'
+								)
+		                    )
+		                );
 					}
 	                break;
 	        	case 'user_mail_configs':
@@ -85,22 +118,6 @@ class DbUsersSchema extends CakeSchema {
 		                );
 					}
 	                break;
-	        	/*case 'users':
-	                $User = ClassRegistry::init('User');
-	                $User -> create();
-	                $User -> save(
-	                    array('User' =>
-	                        array(
-	                        	'role_id' => 1,
-	                        	'username' => 'admin',
-	                        	'email' => 'admin@bloomweb.co',
-	                        	'name' => 'app',
-	                        	'lastname' => 'admin',
-	                        	'password' => 'admin'
-							)
-	                    )
-	                );
-	                break;*/
 	            case 'roles':
 	                $Role = ClassRegistry::init('Role');
 	                $Role -> create();
@@ -119,6 +136,36 @@ class DbUsersSchema extends CakeSchema {
 	                $Role -> save(
 	                    array('Role' =>
 	                        array('role' => 'Cliente')
+	                    )
+	                );
+	                break;
+				case 'document_types':
+	                $Role = ClassRegistry::init('DocumentType');
+	                $Role -> create();
+	                $Role -> save(
+	                    array('DocumentType' =>
+	                        array(
+	                        	'document_type' => 'Cédula',
+	                        	'description' => 'Cedula De Ciudadanía'
+							)
+	                    )
+	                );
+					$Role -> create();
+	                $Role -> save(
+	                    array('DocumentType' =>
+	                        array(
+	                        	'document_type' => 'C/Extranjería',
+	                        	'description' => 'Cedula De Extranjería'
+							)
+	                    )
+	                );
+					$Role -> create();
+	                $Role -> save(
+	                    array('DocumentType' =>
+	                        array(
+	                        	'document_type' => 'Pasaporte',
+	                        	'description' => 'Pasaporte'
+							)
 	                    )
 	                );
 	                break;
@@ -256,11 +303,25 @@ class DbUsersSchema extends CakeSchema {
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'roles' => array('column' => 'role')
 		)
+	);	
+	
+	public $document_types = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
+		'document_type' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
+		'description' => array('type'=>'text', 'null' => true),
+		'created' => array('type'=>'datetime', 'null' => true),
+		'updated' => array('type'=>'datetime', 'null' => true),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'document_types' => array('column' => 'document_type')
+		)
 	);
 	
 	public $users = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		'role_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'index'),
+		'document_type_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'index'),
+		'document' => array('type' => 'string', 'null' => false, 'length' => 40),
 		'username' => array('type' => 'string', 'null' => false, 'length' => 100, 'key' => 'index'),
 		'email' => array('type' => 'string', 'null' => false, 'length' => 100, 'key' => 'index'),
 		'name' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
@@ -360,15 +421,13 @@ class DbUsersSchema extends CakeSchema {
 	public $mailing_lists = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		'user_mail_config_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'index'),
-		'list_name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'key' => 'index'),
-		'list_id' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'key' => 'index'),
+		'scenario' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'key' => 'index'),
+		'list_unique_code' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'key' => 'index'),
+		'campaign_unique_code' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100, 'key' => 'index'),
 		'created' => array('type' => 'datetime', 'null' => true),
 		'updated' => array('type' => 'datetime', 'null' => true),
 		'indexes' => array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'user_mail_configs' => array('column' => 'user_mail_config_id'),
-			'lists' => array('column' => 'list_name'),
-			'list_ids' => array('column' => 'list_id'),
+			'PRIMARY' => array('column' => 'id', 'unique' => 1)
 		)
 	);
 

@@ -26,9 +26,8 @@ class UserMailConfigsController extends UserControlAppController {
 			} else {
 				$this -> Session -> setFlash(__('Error al tratar de guardar la configuración. Verifique los campos e intente de nuevo.'));
 			}
-		} else {
-			$this -> request -> data = $this -> UserMailConfig -> read(null, 1);
 		}
+		$this -> request -> data = $this -> UserMailConfig -> read(null, 1);
 		$this -> set('mailServices', $this -> UserMailConfig -> MailService -> find('list'));
 	}
 
