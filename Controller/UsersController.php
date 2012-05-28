@@ -27,7 +27,7 @@ class UsersController extends UserControlAppController {
 				)
 			)
 		);
-		$this -> Auth -> allow('register', 'logout');
+		$this -> Auth -> allow('register');
 	}
 
 	/**
@@ -35,41 +35,115 @@ class UsersController extends UserControlAppController {
 	 *
 	 * @return void
 	 */
-	public function profile() {
-		$this -> User -> id = $this -> Auth -> user('id');
-		if (!$this -> User -> exists()) {
-			throw new NotFoundException(__('Usuario no válido'));
+	public function profile() {		
+		if (!$this -> Auth -> user('id')) {
+			$this -> redirect(
+				array(
+					'action' => 'login',
+					'controller' => 'users',
+					'plugin' => 'user_control'
+				)
+			);
+		} else {
+			$this -> set('user', $this -> User -> read(null, $this -> Auth -> user('id')));
 		}
-		$this -> set('user', $this -> User -> read(null, $id));
 	}
 
 	/**
 	 * edit method
 	 *
-	 * @param string $id
 	 * @return void
 	 */
-	public function edit($id = null) {
-		$this -> User -> id = $id;
-		if (!$this -> User -> exists()) {
-			throw new NotFoundException(__('Usuario no válido'));
-		}
-		if ($this -> request -> is('post') || $this -> request -> is('put')) {
-			if ($this -> User -> save($this -> request -> data)) {
-				$this -> Session -> setFlash(__('The user has been saved'));
-				$this -> redirect(array('action' => 'index'));
-			} else {
-				$this -> Session -> setFlash(__('The user could not be saved. Please, try again.'));
-			}
+	public function edit() {
+		if (!$this -> Auth -> user('id')) {
+			$this -> redirect(
+				array(
+					'action' => 'login',
+					'controller' => 'users',
+					'plugin' => 'user_control'
+				)
+			);
 		} else {
-			$this -> request -> data = $this -> User -> read(null, $id);
+			if ($this -> request -> is('post') || $this -> request -> is('put')) {
+				if ($this -> User -> save($this -> request -> data)) {
+					$this -> Session -> setFlash(__('The user has been saved'));
+					$this -> redirect(array('action' => 'index'));
+				} else {
+					$this -> Session -> setFlash(__('The user could not be saved. Please, try again.'));
+				}
+			}
+			$this -> request -> data = $this -> User -> read(null, $this -> Auth -> user('id'));
+			$roles = $this -> User -> Role -> find('list');
+			$this -> set(compact('roles'));
 		}
-		$roles = $this -> User -> Role -> find('list');
-		$this -> set(compact('roles'));
 	}
 	
 	/**
-	 * index method
+	 * editPassword method
+	 *
+	 * @return void
+	 */
+	public function editPassword() {
+		if (!$this -> Auth -> user('id')) {
+			$this -> redirect(
+				array(
+					'action' => 'login',
+					'controller' => 'users',
+					'plugin' => 'user_control'
+				)
+			);
+		} else {
+			if ($this -> request -> is('post') || $this -> request -> is('put')) {
+				if ($this -> User -> save($this -> request -> data)) {
+					$this -> Session -> setFlash(__('Se ha modificado la contraseña'));
+					$this -> redirect(
+						array(
+							'action' => 'profile',
+							'controller' => 'users',
+							'plugin' => 'user_control'
+						)
+					);
+				} else {
+					$this -> Session -> setFlash(__('No se pudo modificar la contraseña. Por favor, intente de nuevo.'));
+				}
+			}
+			$this -> request -> data = $this -> User -> read(null, $this -> Auth -> user('id'));
+			$roles = $this -> User -> Role -> find('list');
+			$this -> set(compact('roles'));
+		}
+	}
+	
+	/**
+	 * addresses method
+	 *
+	 * @return void
+	 */
+	public function addresses() {
+		if (!$this -> Auth -> user('id')) {
+			$this -> redirect(
+				array(
+					'action' => 'login',
+					'controller' => 'users',
+					'plugin' => 'user_control'
+				)
+			);
+		} else {
+			if ($this -> request -> is('post') || $this -> request -> is('put')) {
+				if ($this -> User -> save($this -> request -> data)) {
+					$this -> Session -> setFlash(__('The user has been saved'));
+					$this -> redirect(array('action' => 'profile'));
+				} else {
+					$this -> Session -> setFlash(__('The user could not be saved. Please, try again.'));
+				}
+			}
+			$this -> request -> data = $this -> User -> read(null, $this -> Auth -> user('id'));
+			$roles = $this -> User -> Role -> find('list');
+			$this -> set(compact('roles'));
+		}
+	}
+	
+	/**
+	 * admin_index method
 	 *
 	 * @return void
 	 */
