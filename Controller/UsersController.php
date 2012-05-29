@@ -27,7 +27,14 @@ class UsersController extends UserControlAppController {
 				)
 			)
 		);
-		$this -> Auth -> allow('register',/*los siguientes no son publicos*/'orders');
+		/**
+		 * Dejar con acceso público la página de registro
+		 */
+		$this -> Auth -> allow('register');
+		/**
+		 * Declarar aquí lo que se necesite agregar en ACL para usuarios registrados
+		 */
+		//$this -> Auth -> allow('');
 	}
 
 	/**
@@ -87,7 +94,6 @@ class UsersController extends UserControlAppController {
 	 */
 	public function editPassword() {
 		$this -> layout='profile';
-		$this -> layout='ajax';
 		if (!$this -> Auth -> user('id')) {
 			$this -> redirect(
 				array(
@@ -111,7 +117,6 @@ class UsersController extends UserControlAppController {
 					$this -> Session -> setFlash(__('No se pudo modificar la contraseña. Por favor, intente de nuevo.'), 'crud/error');
 				}
 			}
-			$this -> request -> data = $this -> User -> read(null, $this -> Auth -> user('id'));
 		}
 	}
 	

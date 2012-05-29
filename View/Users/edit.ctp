@@ -16,7 +16,7 @@
 <br />
 <br />
 <h1>Modificar Contraseña</h1>
-<?php echo $this -> Form -> create('User'); ?>
+<?php echo $this -> Form -> create('User', array('action' => 'editPassword')); ?>
 	<fieldset>
 
 		<?php echo $this -> Form -> input('id'); ?>

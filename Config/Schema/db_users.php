@@ -290,10 +290,10 @@ class DbUsersSchema extends CakeSchema {
 				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias edit";
 				exec($path);
 				// Permitir acceso a edit
-				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias addresses";
+				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias editPassword";
 				exec($path);
 				// Permitir acceso a edit
-				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias editPassword";
+				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias orders";
 				exec($path);
 			}
 		}

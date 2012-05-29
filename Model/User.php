@@ -163,6 +163,10 @@ class User extends UserControlAppModel {
 	}
 	
 	public function beforeSave() {
+		if(!isset($this -> data['User']['role_id']) && isset($this -> data['User']['id'])) {
+			$user = $this -> read(null, $this -> data['User']['id']);
+			$this -> data['User']['role_id'] = $user['User']['role_id'];
+		}
 		if(isset($this -> data['User']['password']) && !empty($this -> data['User']['password'])) {
 			$this -> data['User']['password'] = AuthComponent::password($this -> data['User']['password']);
 			$this -> data['User']['verify_password'] = AuthComponent::password($this -> data['User']['verify_password']);
