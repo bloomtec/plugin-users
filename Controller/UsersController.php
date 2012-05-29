@@ -27,7 +27,7 @@ class UsersController extends UserControlAppController {
 				)
 			)
 		);
-		$this -> Auth -> allow('register',/*los siguientes no son publicos*/'data','orders');
+		$this -> Auth -> allow('register',/*los siguientes no son publicos*/'orders');
 	}
 
 	/**
@@ -35,7 +35,8 @@ class UsersController extends UserControlAppController {
 	 *
 	 * @return void
 	 */
-	public function profile() {		
+	public function profile() {	
+		$this -> layout='profile';
 		if (!$this -> Auth -> user('id')) {
 			$this -> redirect(
 				array(
@@ -48,32 +49,14 @@ class UsersController extends UserControlAppController {
 			$this -> set('user', $this -> User -> read(null, $this -> Auth -> user('id')));
 		}
 	}
-	/**
-	 * Datos de usuario
-	 * 
-	 * @return void
-	 */
-	public function data() {
-		$this -> layout='ajax';
-		if (!$this -> Auth -> user('id')) {
-			$this -> redirect(
-				array(
-					'action' => 'login',
-					'controller' => 'users',
-					'plugin' => 'user_control'
-				)
-			);
-		} else {
-			$this -> set('user', $this -> User -> read(null, $this -> Auth -> user('id')));
-		}
-	}
+
 	/**
 	 * edit method
 	 *
 	 * @return void
 	 */
 	public function edit() {
-		$this -> layout='ajax';
+		$this -> layout='profile';
 		if (!$this -> Auth -> user('id')) {
 			$this -> redirect(
 				array(
@@ -86,14 +69,14 @@ class UsersController extends UserControlAppController {
 			if ($this -> request -> is('post') || $this -> request -> is('put')) {
 				if ($this -> User -> save($this -> request -> data)) {
 					$this -> Session -> setFlash(__('Se modificó el usuario'), 'crud/success');
-					$this -> redirect(array('action' => 'index'));
+					$this -> redirect(array('action' => 'profile'));
 				} else {
 					$this -> Session -> setFlash(__('No se pudo modificar el usuario. Por favor, intente de nuevo,'), 'crud/error');
 				}
 			}
 			$this -> request -> data = $this -> User -> read(null, $this -> Auth -> user('id'));
-			$roles = $this -> User -> Role -> find('list');
-			$this -> set(compact('roles'));
+			$documentTypes = $this -> User -> DocumentType -> find('list');
+			$this -> set(compact('documentTypes'));
 		}
 	}
 	
@@ -103,6 +86,7 @@ class UsersController extends UserControlAppController {
 	 * @return void
 	 */
 	public function editPassword() {
+		$this -> layout='profile';
 		$this -> layout='ajax';
 		if (!$this -> Auth -> user('id')) {
 			$this -> redirect(
@@ -131,13 +115,8 @@ class UsersController extends UserControlAppController {
 		}
 	}
 	
-	/**
-	 * addresses method
-	 *
-	 * @return void
-	 */
-	public function addresses() {
-		$this -> layout='ajax';
+	public function orders() {
+		$this -> layout='profile';
 		if (!$this -> Auth -> user('id')) {
 			$this -> redirect(
 				array(

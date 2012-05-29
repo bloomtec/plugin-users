@@ -1,27 +1,34 @@
 <div class="users form">
+<h1>Modificar Mis datos</h1>
 <?php echo $this->Form->create('User');?>
 	<fieldset>
-		<legend><?php echo __('Edit User'); ?></legend>
 	<?php
 		echo $this->Form->input('id');
-		echo $this->Form->input('role_id');
-		echo $this->Form->input('username');
-		echo $this->Form->input('email');
-		echo $this->Form->input('name');
-		echo $this->Form->input('lastname');
-		echo $this->Form->input('password');
-		echo $this->Form->input('is_active');
-	?>
+		echo $this->Form->input('name',array('label'=>'Nombres'));
+		echo $this->Form->input('lastname',array('label'=>'Apellidos'));
+		echo $this->Form->input('document_type_id',array('label'=>'Tipo de Documento'));
+		echo $this->Form->input('document',array('label'=>'Documento'));
+		echo $this->Form->input('sex',array('label'=>'Sexo'));
+		echo $this->Form->input('birthday',array('label'=>'Fecha de Nacimiento'));
+	?>	
 	</fieldset>
-<?php echo $this->Form->end(__('Submit'));?>
-</div>
-<div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
+<?php echo $this->Form->end(__('Modificar'));?>
+<br />
+<br />
+<h1>Modificar Contraseña</h1>
+<?php echo $this -> Form -> create('User'); ?>
+	<fieldset>
 
-		<li><?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $this->Form->value('User.id')), null, __('Are you sure you want to delete # %s?', $this->Form->value('User.id'))); ?></li>
-		<li><?php echo $this->Html->link(__('List Users'), array('action' => 'index'));?></li>
-		<li><?php echo $this->Html->link(__('List Roles'), array('controller' => 'roles', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Role'), array('controller' => 'roles', 'action' => 'add')); ?> </li>
-	</ul>
+		<?php echo $this -> Form -> input('id'); ?>
+		<?php echo $this -> Form->input("password",array('type'=>'password','div' => 'password ', 'value' => '',"label"=>"Contraseña",'required'=>'required'));?>
+		<?php echo $this -> Form->input("verify_password",array('type'=>'password','div' => 'password ', 'value' => '',"label"=>"Escribe de nuevo tu contraseña",'required'=>'required','data-equals'=>"data[User][password]"));?>			
+	</fieldset>
+<?php echo $this -> Form -> end(__('Modificar')); ?>
+<script type="text/javascript">
+	$(function(){
+		// Asignar validator al form
+		$('#UserEditPasswordForm').validator({ lang: 'es' });	
+	});
+</script>
+
 </div>
