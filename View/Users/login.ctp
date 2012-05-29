@@ -12,8 +12,8 @@
 			<h2 class='rosa'>Clientes PriceShoes</h2>
 			<?php echo $this -> Form->create("User",array("action"=>"login","controller"=>"users"));?>
 			<p>Sí ya dispone de una cuenta con nosotros por favor ingrese sus datos.</p>
-				<?php echo $this -> Form->input("email",array('div' => 'email-login',"label"=>"Dirección E-mail"));?>
-				<?php echo $this -> Form->input("password",array('div' => 'password-login',"label"=>"Contraseña"));?>
+				<?php echo $this -> Form->input("username",array('div' => 'email-login',"label"=>"Dirección E-mail", 'value' => ''));?>
+				<?php echo $this -> Form->input("password",array('div' => 'password-login',"label"=>"Contraseña", 'value'=>''));?>
 				<div style="clear:both"></div>
 				<div class="captcha">
 					<div id="recaptcha_div">
@@ -26,9 +26,12 @@
 	            <?php echo $this -> Form -> submit(__('Ingresar', true));?> 
 	            <div style="clear:both;"></div>
 				</div>
-				<?php $login_attempts=4; if($login_attempts > 3) : ?>
-					<?php echo $this -> Form -> input('captcha_error', array('value' => $error, 'div' => false, 'label' => false, 'style' => 'visibility:hidden;')); ?>
-				<?php endif;?>
+				<?php 
+					//$login_attempts=4;
+					if($login_attempts > 3) {
+						echo $this -> Form -> input('captcha_error', array('value' => $error, 'div' => false, 'label' => false, 'style' => 'visibility:hidden;'));
+					}
+				?>
 				<div style="clear:both;"></div>
 				<?php echo $this -> Form -> end(); ?>				
 		</div>
@@ -43,16 +46,12 @@
 			lang : 'es',
 			callback : function() {
 				if($('#UserCaptchaError').val() != '') {
-					$('#recaptcha_div').removeClass('recaptcha_nothad_incorrect_sol');
 					$('#recaptcha_instructions_image').remove();
+					$('#recaptcha_div').removeClass('recaptcha_nothad_incorrect_sol');
 					$('#recaptcha_div').addClass($('#UserCaptchaError').val());
 				}
 			}
 		});
-		/* Manejar el submit 
-		$('#SubmitButton').click(function() {
-			$('#UserLoginForm').submit();
-		});*/
 	});
 </script>
 <?php endif;?>
