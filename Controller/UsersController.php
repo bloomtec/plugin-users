@@ -269,7 +269,7 @@ class UsersController extends UserControlAppController {
 							} else {
 								$login_attempts += 1;
 								$this -> Cookie -> write('User.login_attempts', $login_attempts);
-								$this -> Session -> setFlash(__('Usuario o contraseña incorrectos.'), , 'crud/error');
+								$this -> Session -> setFlash(__('Usuario o contraseña incorrectos.'), 'crud/error');
 							}
 						}
 					} else {
@@ -284,7 +284,7 @@ class UsersController extends UserControlAppController {
 				if ($this -> Auth -> login()) {
 					$this -> Cookie -> delete('User.login_attempts');
 					return $this -> redirect($this -> Auth -> redirect());
-					$this -> Session -> setFlash(__('Has iniciado sesión.'), , 'crud/success');
+					$this -> Session -> setFlash(__('Has iniciado sesión.'), 'crud/success');
 				} else {
 					$login_attempts += 1;
 					$this -> Cookie -> write('User.login_attempts', $login_attempts);
