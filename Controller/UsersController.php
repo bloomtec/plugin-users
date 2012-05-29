@@ -85,10 +85,10 @@ class UsersController extends UserControlAppController {
 		} else {
 			if ($this -> request -> is('post') || $this -> request -> is('put')) {
 				if ($this -> User -> save($this -> request -> data)) {
-					$this -> Session -> setFlash(__('The user has been saved'));
+					$this -> Session -> setFlash(__('Se modificó el usuario'), 'crud/success');
 					$this -> redirect(array('action' => 'index'));
 				} else {
-					$this -> Session -> setFlash(__('The user could not be saved. Please, try again.'));
+					$this -> Session -> setFlash(__('No se pudo modificar el usuario. Por favor, intente de nuevo,'), 'crud/error');
 				}
 			}
 			$this -> request -> data = $this -> User -> read(null, $this -> Auth -> user('id'));
@@ -115,7 +115,7 @@ class UsersController extends UserControlAppController {
 		} else {
 			if ($this -> request -> is('post') || $this -> request -> is('put')) {
 				if ($this -> User -> save($this -> request -> data)) {
-					$this -> Session -> setFlash(__('Se ha modificado la contraseña'));
+					$this -> Session -> setFlash(__('Se ha modificado la contraseña'), 'crud/success');
 					$this -> redirect(
 						array(
 							'action' => 'profile',
@@ -124,12 +124,10 @@ class UsersController extends UserControlAppController {
 						)
 					);
 				} else {
-					$this -> Session -> setFlash(__('No se pudo modificar la contraseña. Por favor, intente de nuevo.'));
+					$this -> Session -> setFlash(__('No se pudo modificar la contraseña. Por favor, intente de nuevo.'), 'crud/error');
 				}
 			}
 			$this -> request -> data = $this -> User -> read(null, $this -> Auth -> user('id'));
-			$roles = $this -> User -> Role -> find('list');
-			$this -> set(compact('roles'));
 		}
 	}
 	
@@ -150,16 +148,14 @@ class UsersController extends UserControlAppController {
 			);
 		} else {
 			if ($this -> request -> is('post') || $this -> request -> is('put')) {
-				if ($this -> User -> save($this -> request -> data)) {
-					$this -> Session -> setFlash(__('The user has been saved'));
+				if ($this -> User -> UserAddress -> save($this -> request -> data)) {
+					$this -> Session -> setFlash(__('Se guardó la información'), 'crud/success');
 					$this -> redirect(array('action' => 'profile'));
 				} else {
-					$this -> Session -> setFlash(__('The user could not be saved. Please, try again.'));
+					$this -> Session -> setFlash(__('No se pudo guardar la información. Por favor, intente de nuevo'), 'crud/success');
 				}
 			}
 			$this -> request -> data = $this -> User -> read(null, $this -> Auth -> user('id'));
-			$roles = $this -> User -> Role -> find('list');
-			$this -> set(compact('roles'));
 		}
 	}
 	
@@ -203,10 +199,10 @@ class UsersController extends UserControlAppController {
 		}
 		if ($this -> request -> is('post') || $this -> request -> is('put')) {
 			if ($this -> User -> save($this -> request -> data)) {
-				$this -> Session -> setFlash(__('The user has been saved'));
+				$this -> Session -> setFlash(__('Se modificó el usuario'), 'crud/success');
 				$this -> redirect(array('action' => 'index'));
 			} else {
-				$this -> Session -> setFlash(__('The user could not be saved. Please, try again.'));
+				$this -> Session -> setFlash(__('No se pudo modificar el usuario. Por favor, intente de nuevo.'), 'crud/error');
 			}
 		} else {
 			$this -> request -> data = $this -> User -> read(null, $id);
@@ -224,10 +220,10 @@ class UsersController extends UserControlAppController {
 		if ($this -> request -> is('post')) {
 			$this -> User -> create();
 			if ($this -> User -> save($this -> request -> data)) {
-				$this -> Session -> setFlash(__('The user has been saved'));
+				$this -> Session -> setFlash(__('Se agregó el usuario'), 'crud/success');
 				$this -> redirect(array('action' => 'index'));
 			} else {
-				$this -> Session -> setFlash(__('The user could not be saved. Please, try again.'));
+				$this -> Session -> setFlash(__('No se pudo agregar el usuario. Por favor, intente de nuevo.'), 'crud/error');
 			}
 		}
 		$roles = $this -> User -> Role -> find('list');
@@ -309,11 +305,11 @@ class UsersController extends UserControlAppController {
 				if ($this -> Auth -> login()) {
 					$this -> Cookie -> delete('User.login_attempts');
 					return $this -> redirect($this -> Auth -> redirect());
-					$this -> Session -> setFlash(__('Has iniciado sesión.'), 'default', array(), 'auth');
+					$this -> Session -> setFlash(__('Has iniciado sesión.'), 'crud/success');
 				} else {
 					$login_attempts += 1;
 					$this -> Cookie -> write('User.login_attempts', $login_attempts);
-					$this -> Session -> setFlash(__('Usuario o contraseña incorrectos.'), 'default', array(), 'auth');
+					$this -> Session -> setFlash(__('Usuario o contraseña incorrectos.'), 'crud/error');
 				}
 			}
 		}
@@ -386,17 +382,18 @@ class UsersController extends UserControlAppController {
 						// Enviar el correo de registro
 						$result = $this -> sendRegistrationEmail($this -> request -> data);
 						if($result) {
-							$this -> Session -> setFlash(__('Registro Exitoso. Se te ha enviado un correo a la dirección registrada'));
+							$this -> Session -> setFlash(__('Registro Exitoso. Se te ha enviado un correo a la dirección registrada'), 'crud/success');
 						} else {
-							$this -> Session -> setFlash(__('Registro Exitoso'));
+							$this -> Session -> setFlash(__('Registro Exitoso'), 'crud/success');
 						}
-						$this -> redirect('/');
+						
+						$this -> redirect(array('action' => 'login'));
 					} else {
-						$this -> Session -> setFlash(__('Falló el registro. Verifique los datos e intente de nuevo.'));
+						$this -> Session -> setFlash(__('Falló el registro. Verifique los datos e intente de nuevo.'), 'crud/error');
 					}
 				} else {
 					// Asignar el error para llevar a la vista
-					$this -> Session -> setFlash(__('Debes ingresar los datos correctos al captcha'));
+					$this -> Session -> setFlash(__('Debes ingresar los datos correctos al captcha'), 'crud/error');
 					$error = $resp -> error;
 				}
 			}
