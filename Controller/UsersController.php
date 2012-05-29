@@ -27,7 +27,7 @@ class UsersController extends UserControlAppController {
 				)
 			)
 		);
-		$this -> Auth -> allow('register');
+		$this -> Auth -> allow('register',/*los siguientes no son publicos*/'data','orders');
 	}
 
 	/**
@@ -48,13 +48,32 @@ class UsersController extends UserControlAppController {
 			$this -> set('user', $this -> User -> read(null, $this -> Auth -> user('id')));
 		}
 	}
-
+	/**
+	 * Datos de usuario
+	 * 
+	 * @return void
+	 */
+	public function data() {
+		$this -> layout='ajax';
+		if (!$this -> Auth -> user('id')) {
+			$this -> redirect(
+				array(
+					'action' => 'login',
+					'controller' => 'users',
+					'plugin' => 'user_control'
+				)
+			);
+		} else {
+			$this -> set('user', $this -> User -> read(null, $this -> Auth -> user('id')));
+		}
+	}
 	/**
 	 * edit method
 	 *
 	 * @return void
 	 */
 	public function edit() {
+		$this -> layout='ajax';
 		if (!$this -> Auth -> user('id')) {
 			$this -> redirect(
 				array(
@@ -84,6 +103,7 @@ class UsersController extends UserControlAppController {
 	 * @return void
 	 */
 	public function editPassword() {
+		$this -> layout='ajax';
 		if (!$this -> Auth -> user('id')) {
 			$this -> redirect(
 				array(
@@ -119,6 +139,7 @@ class UsersController extends UserControlAppController {
 	 * @return void
 	 */
 	public function addresses() {
+		$this -> layout='ajax';
 		if (!$this -> Auth -> user('id')) {
 			$this -> redirect(
 				array(
@@ -269,11 +290,11 @@ class UsersController extends UserControlAppController {
 							if ($this -> Auth -> login()) {
 								$this -> Cookie -> delete('User.login_attempts');
 								return $this -> redirect($this -> Auth -> redirect());
-								$this -> Session -> setFlash(__('Has iniciado sesión.'), 'default', array(), 'auth');
+								$this -> Session -> setFlash(__('Has iniciado sesión.'));
 							} else {
 								$login_attempts += 1;
 								$this -> Cookie -> write('User.login_attempts', $login_attempts);
-								$this -> Session -> setFlash(__('Usuario o contraseña incorrectos.'), 'default', array(), 'auth');
+								$this -> Session -> setFlash(__('Usuario o contraseña incorrectos.'));
 							}
 						}
 					} else {
