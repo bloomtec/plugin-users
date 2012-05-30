@@ -399,7 +399,9 @@ class UsersController extends UserControlAppController {
 	private function sendRegistrationEmail($user = null) {
 		if($user) {
 			$this -> loadModel('UserMailConfig');
+			$this -> loadModel('MailingList');
 			$user_mail_config = $this -> UserMailConfig -> read(null, 1);
+			$mailing_list = $this -> MailingList -> findByScenario('Registro De Usuario');
 			
 			// Verificar si se está usando un servicio
 			if($user_mail_config['UserMailConfig']['is_active']) {
@@ -407,7 +409,11 @@ class UsersController extends UserControlAppController {
 				switch($user_mail_config['UserMailConfig']['mail_service_id']) {
 					// MailChimp
 					case 1:
-						return $this -> mailChimpRegistrationEmail($user, $user_mail_config['UserMailConfig']['api_key']);
+						return $this -> mailChimpRegistrationEmail(
+							$user,
+							$user_mail_config['UserMailConfig']['api_key'],
+							$mailing_list['MailingList']['list_unique_code']
+						);
 						break;
 					// No hay servicios configurados
 					default:
@@ -429,13 +435,12 @@ class UsersController extends UserControlAppController {
 	 * 
 	 * @return true o false dependiendo de si fue exitoso el envío 
 	 */
-	private function mailChimpRegistrationEmail($user = null, $api_key = null) {
+	private function mailChimpRegistrationEmail($user = null, $api_key = null, $list_id = null) {
 		if($user && $api_key) {
 			$lib_path = APP . 'Plugin/UserControl/Lib/MailChimp/MCAPI.class.php';
 			require_once($lib_path);
 			$api = new MCAPI($api_key);
 			
-			$list_id = '0ae21abae4'; // ID único de la lista de clientes registrados
 			$merge_vars = array();
 			
 			return $api -> listSubscribe($list_id, $user['User']['email'], $merge_vars);
