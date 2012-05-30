@@ -11,9 +11,15 @@ class UsersController extends UserControlAppController {
 	 */
 	private $public_key = "6LfC5dESAAAAANQHI4pvu2S_wniSgHivoXFYuT5a";
 	private $private_key = "6LfC5dESAAAAAL-J0uwgmJMSxrBSwSd0uXXZ3Wqt";
-
+	
+	/**
+	 * Declarar aquí lo que debe suceder siempre que se acceda a usuarios
+	 * 
+	 * @return void
+	 */
 	public function beforeFilter() {
 		parent::beforeFilter();
+		
 		$this -> User -> bindModel(
 			array(
 				'belongsTo' => array(
@@ -27,14 +33,10 @@ class UsersController extends UserControlAppController {
 				)
 			)
 		);
-		/**
-		 * Dejar con acceso público la página de registro
-		 */
-		$this -> Auth -> allow('register');
-		/**
-		 * Declarar aquí lo que se necesite agregar en ACL para usuarios registrados
-		 */
-		//$this -> Auth -> allow('');
+		
+		// Métodos que deben quedar públicos
+		$this -> Auth -> allow('register', 'resetPassword');
+		
 	}
 
 	/**
@@ -441,6 +443,15 @@ class UsersController extends UserControlAppController {
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * Resetear contraseña de usuario
+	 * 
+	 * @return void
+	 */
+	public function resetPassword() {
+		
 	}
 	
 	/**

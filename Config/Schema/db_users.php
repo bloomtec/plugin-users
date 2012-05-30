@@ -280,21 +280,6 @@ class DbUsersSchema extends CakeSchema {
 				// Negar inicialmente acceso a todo a los demás usuarios
 				$path = APP . 'Console/cake -app ' . APP . " acl deny $alias controllers";
 				exec($path);
-				// Permitir acceso a logout
-				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias logout";
-				exec($path);
-				// Permitir acceso al perfil (profile)
-				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias profile";
-				exec($path);
-				// Permitir acceso a edit
-				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias edit";
-				exec($path);
-				// Permitir acceso a edit
-				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias editPassword";
-				exec($path);
-				// Permitir acceso a edit
-				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias orders";
-				exec($path);
 			}
 		}
 	}
@@ -334,7 +319,7 @@ class DbUsersSchema extends CakeSchema {
 		'lastname' => array('type' => 'string', 'null' => false, 'length' => 20, 'key' => 'index'),
 		'password' => array('type' => 'string', 'null' => false, 'length' => 40),
 		'birthday' => array('type' => 'date', 'null' => false),
-		'sex' => array('type' => 'boolean', 'null' => false, 'default' => 1, 'key' => 'index'),
+		'sex' => array('type' => 'string', 'null' => false, 'length' => 1, 'default' => NULL, 'key' => 'index'),
 		'is_active' => array('type' => 'boolean', 'null' => false, 'default' => 1, 'key' => 'index'),
 		'created' => array('type' => 'datetime', 'null' => true),
 		'updated' => array('type' => 'datetime', 'null' => true),
@@ -351,7 +336,7 @@ class DbUsersSchema extends CakeSchema {
 	public $user_addresses = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		'user_id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'index'),
-		'name' => array('type' => 'string', 'null' => false, 'default' => 'default', 'length' => 100, 'key' => 'index'),
+		'name' => array('type' => 'string', 'null' => false, 'default' => 'Principal', 'length' => 100, 'key' => 'index'),
 		'country' => array('type' => 'string', 'null' => false, 'length' => 100, 'key' => 'index'),
 		'state' => array('type' => 'string', 'null' => false, 'length' => 100, 'key' => 'index'),
 		'city' => array('type' => 'string', 'null' => false, 'length' => 100, 'key' => 'index'),

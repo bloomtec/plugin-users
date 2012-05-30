@@ -22,7 +22,7 @@
 				</div>
 				 <div style="clear:both;"></div>
 				<div class="cuadro-formularios">
-	            <?php echo $this -> Html->link('¿Olvidó su contraseña?',array("controller"=>"users","action"=>"olvidar"), array("class"=>"rosa"));?>  
+	            <?php echo $this -> Html->link('¿Olvidó su contraseña?',array('plugin'=>'user_control', "controller"=>"users","action"=>"resetPassword"), array("class"=>"rosa"));?>  
 	            <?php echo $this -> Form -> submit(__('Ingresar', true));?> 
 	            <div style="clear:both;"></div>
 				</div>

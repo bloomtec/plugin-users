@@ -17,7 +17,7 @@
 	    	</div>
     		<div class="input sexo">
 			<br />
-    		<?php echo $this -> Form->input('sex', array("div"=>false,'label'=>'Sexo','required'=>'required','options' => array('0'=>'Femenino','1'=>'Masculino'))); ?>
+    		<?php echo $this -> Form->input('sex', array("div"=>false,'label'=>'Sexo','required'=>'required','options' => array('F'=>'Femenino','M'=>'Masculino'))); ?>
 			</div>
 			<div class="input calendario">
 				<br />

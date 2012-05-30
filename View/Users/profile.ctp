@@ -1,4 +1,4 @@
-	<div class="content">
+<div class="content">
 	<h1>Mis datos</h1>
 		<h3>Email:</h3>
 		<span><?php echo $user['User']['email']?></span>
@@ -15,6 +15,7 @@
 	<br />
 	<br />
 	<h1>Mis Direcciones</h1>
+	<div>
 	<?php foreach($user['UserAddress'] as $address): ?>
 		<div class="address">
 			<div class='name'>
@@ -35,7 +36,25 @@
 			<div class='phone'>
 				<h3>telefono:</h3><?php echo $address['phone']?>
 			</div>
-			<a href="/user_control/userAddresses/edit/<?php echo $address['id']?>">Modificar</a>
+			<a href="/user_control/user_addresses/edit/<?php echo $address['id']; ?>">Modificar</a>
+			<?php
+				echo $this->Form->postLink(
+					__('Eliminar'),
+					array(
+						'plugin' => 'user_control',
+						'controller' => 'user_addresses',
+						'action' => 'delete',
+						$address['id']
+					),
+					array(
+						'class'=>'delete'
+					),
+					__('¿Elimiinar la dirección ' . $address['name'] . '?', $address['id'])
+				);
+			?>
 		</div>
 	<?php endforeach;?>
 	</div>
+	<div style="clear: both"></div><br />
+	<a href="/user_control/user_addresses/add">Agregar Dirección</a>
+</div>

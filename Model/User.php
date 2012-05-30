@@ -8,10 +8,25 @@ App::uses('AuthComponent', 'Controller/Component');
  */
 class User extends UserControlAppModel {
 	
+	/**
+	 * Comportamientos
+	 * 
+	 * @var array
+	 */
 	public $actsAs = array('Acl' => array('type' => 'requester'));
 	
+	/**
+	 * Campo para mostrar
+	 * 
+	 * @var string
+	 */
 	public $displayField = 'username';
 	
+	/**
+	 * Campos virtuales
+	 * 
+	 * @var array
+	 */
 	public $virtualFields = array(
 		'full_name' => 'CONCAT(name, " ", lastname)'
 	);
@@ -138,6 +153,11 @@ class User extends UserControlAppModel {
 		),
 	);
 	
+	/**
+	 * Validación para ver si los correos ingresados son equivalentes
+	 * 
+	 * @return true o false dependiendo de si son o no equivalentes
+	 */
 	public function compareEmails() {
 		if(isset($this -> data['User']['email']) && isset($this -> data['User']['verify_email'])) {
 			if($this -> data['User']['email'] == $this -> data['User']['verify_email']) {
@@ -150,6 +170,11 @@ class User extends UserControlAppModel {
 		}
 	}
 	
+	/**
+	 * Validación para ver si las contraseñas ingresadas son equivalentes
+	 * 
+	 * @return true o false dependiendo de si son o no equivalentes
+	 */
 	public function comparePasswords() {
 		if(isset($this -> data['User']['password']) && isset($this -> data['User']['verify_password'])) {
 			if($this -> data['User']['password'] == $this -> data['User']['verify_password']) {
@@ -162,15 +187,40 @@ class User extends UserControlAppModel {
 		}
 	}
 	
+	/**
+	 * Procedimientos a seguir antes de guardar información
+	 * 
+	 * @return true o false acorde si se puede o no guardar la información
+	 */
 	public function beforeSave() {
 		if(!isset($this -> data['User']['role_id']) && isset($this -> data['User']['id'])) {
 			$user = $this -> read(null, $this -> data['User']['id']);
-			$this -> data['User']['role_id'] = $user['User']['role_id'];
+			if(isset($user['User']['role_id']) && !empty($user['User']['role_id'])) {
+				$this -> data['User']['role_id'] = $user['User']['role_id'];
+			}
 		}
 		if(isset($this -> data['User']['password']) && !empty($this -> data['User']['password'])) {
 			$this -> data['User']['password'] = AuthComponent::password($this -> data['User']['password']);
 			$this -> data['User']['verify_password'] = AuthComponent::password($this -> data['User']['verify_password']);
 		}
+	}
+	
+	/**
+	 * ACL method
+	 */
+	function parentNode() {
+	    if (!$this -> id && empty($this -> data)) {
+	        return null;
+	    }
+	    $data = $this -> data;
+	    if (empty($data)) {
+	        $data = $this -> read();
+	    }
+	    if (!$data['User']['role_id']) {
+	        return null;
+	    } else {
+	        return array('Role' => array('id' => $data['User']['role_id']));
+	    }
 	}
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
@@ -217,23 +267,5 @@ class User extends UserControlAppModel {
 			'counterQuery' => ''
 		)
 	);
-	
-	/**
-	 * ACL method
-	 */
-	function parentNode() {
-	    if (!$this -> id && empty($this -> data)) {
-	        return null;
-	    }
-	    $data = $this -> data;
-	    if (empty($data)) {
-	        $data = $this -> read();
-	    }
-	    if (!$data['User']['role_id']) {
-	        return null;
-	    } else {
-	        return array('Role' => array('id' => $data['User']['role_id']));
-	    }
-	}
 	
 }
