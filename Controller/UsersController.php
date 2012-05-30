@@ -452,20 +452,58 @@ class UsersController extends UserControlAppController {
 	 */
 	public function resetPassword() {
 		
+		if($this -> request -> is('post') || $this -> request -> is('put')) {
+			
+			if(isset($this -> request -> data['User']['email']) && !empty($this -> request -> data['User']['email'])) {
+				$this -> User -> recursive = -1;
+				$test_user = $this -> User -> findByEmail($this -> request -> data['User']['email']);
+							
+				if($test_user) {
+					$password = $this -> generatePassword();
+					$user = $this -> User -> read(null, $test_user['User']['id']);
+					$user['User']['password'] = $password;
+					$user['User']['verify_password'] = $password;
+					if($this -> User -> save($user)) {
+						$email_address = Configure::read('email');
+						$email_password = Configure::read('email_password');
+						$site_name = Configure::read('site_name');
+						$gmail = array(
+							'host' => 'ssl://smtp.gmail.com',
+							'port' => 465,
+							'username' => $email_address,
+							'password' => $email_password,
+							'transport' => 'Smtp'
+						);
+						App::uses('CakeEmail', 'Network/Email');
+						$email = new CakeEmail($gmail);
+						$email -> from(array($email_address => $site_name));
+						$email -> to($user['User']['email']);
+						$email -> subject('Renovación De Contraseña :: ' . $site_name);
+						$email -> send('Su nueva contraseña es :: ' . $password);
+					}
+				}
+				
+				$this -> Session -> setFlash('Si el correo ingresado está registrado proximamente le llegará un correo con su nueva contraseña');
+			} else {
+				$this -> Session -> setFlash('Debe ingresar un correo electrónico para utilizar esta función');
+			}
+			
+		}
+			
 	}
 	
 	/**
-	 * Enviar correo para confirmar solicitud de 'reset' de contraseña
+	 * Generar una contraseña de manera automática
+	 * 
+	 * @return Una contraseña aleatoria
 	 */
-	public function sendResetPasswordRequestedEmail() {
-		
-	}
-	
-	/**
-	 * Enviar correo con la nueva contraseña al usuario
-	 */
-	public function sendResetPasswordConfirmationEmail() {
-		
+	private function generatePassword() {
+		$str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+		$cad = "";
+		for ($i = 0; $i < 8; $i++) {
+			$cad .= substr($str, rand(0, 62), 1);
+		}
+		return $cad;
 	}
 
 }
