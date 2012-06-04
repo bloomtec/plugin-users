@@ -14,12 +14,6 @@ class UserControlAppController extends AppController {
 		$this -> aclVerification();
 	}
 	
-	public function beforeRender() {
-		if(strstr($this -> action, 'admin_')) {
-			$this -> layout = 'Ez.ez/default';
-		}
-	}
-	
 	/**
 	 * Vericar el acceso de un usuario a una función mediante ACL
 	 * 
