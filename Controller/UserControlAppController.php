@@ -15,7 +15,7 @@ class UserControlAppController extends AppController {
 	}
 	
 	public function beforeRender() {
-		if(strstr($method, 'admin_')) {
+		if(strstr($this -> action, 'admin_')) {
 			$this -> layout = 'Ez.ez/default';
 		}
 	}
