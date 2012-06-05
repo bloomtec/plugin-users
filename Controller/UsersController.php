@@ -271,7 +271,12 @@ class UsersController extends UserControlAppController {
 						if($this -> request -> is('post')) {
 							if ($this -> Auth -> login()) {
 								$this -> Cookie -> delete('User.login_attempts');
-								return $this -> redirect($this -> Auth -> redirect());
+								return $this -> redirect(array(
+									'controller' => 'users',
+									'action' => 'index',
+									'plugin' => 'user_control',
+									'admin' => true
+								));
 								$this -> Session -> setFlash(__('Has iniciado sesión.'));
 							} else {
 								$login_attempts += 1;
