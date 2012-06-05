@@ -35,7 +35,7 @@ class UsersController extends UserControlAppController {
 		);
 		
 		// Métodos que deben quedar públicos
-		$this -> Auth -> allow('register', 'resetPassword');
+		$this -> Auth -> allow('register', 'registerEmail', 'resetPassword');
 		
 	}
 
@@ -312,6 +312,63 @@ class UsersController extends UserControlAppController {
 	 */
 	public function logout() {
 		$this -> redirect($this -> Auth -> logout());
+	}
+	
+	public function registerEmail() {
+		if($this -> request -> is('post') || $this -> request -> is('put')) {
+			$this -> loadModel('UserMailConfig');
+			$this -> loadModel('MailingList');
+			$user_mail_config = $this -> UserMailConfig -> read(null, 1);
+			$mailing_list = $this -> MailingList -> findByScenario('Registro De Correo');
+			
+			// Verificar si se está usando un servicio
+			if($user_mail_config['UserMailConfig']['is_active']) {
+				// Verificar el servicio que se esta usando
+				switch($user_mail_config['UserMailConfig']['mail_service_id']) {
+					// MailChimp
+					case 1:
+						if($this -> mailChimpRegisterEmail(
+							$this -> request -> data['User']['email'],
+							$user_mail_config['UserMailConfig']['api_key'],
+							$mailing_list['MailingList']['list_unique_code']
+						)) {
+							$this -> Session -> setFlash('Por favor revisa tu correo para confirmar el registro', 'crud/success');
+						} else {
+							$this -> Session -> setFlash('Ha ocurrido un error al registrar el correo. Por favor intente de nuevo.', 'crud/error');
+						}
+						break;
+					// No hay servicios configurados
+					default:
+						// TODO : que hacer aqui?
+						return false;
+						break;
+				}
+			}
+			$this -> redirect($this -> referer());
+		}
+	}
+	
+	/**
+	 * Envío de correo mediante mailchimp
+	 * 
+	 * @var $user arreglo con los datos del usuario
+	 * @var $api_key llave de acceso de la cuenta de mailchimp
+	 * 
+	 * @return true o false dependiendo de si fue exitoso el envío 
+	 */
+	private function mailChimpRegisterEmail($email = null, $api_key = null, $list_id = null) {
+		if($email && $api_key) {
+			$lib_path = APP . 'Plugin/UserControl/Lib/MailChimp/MCAPI.class.php';
+			require_once($lib_path);
+			$api = new MCAPI($api_key);
+			
+			$merge_vars = array();
+			
+			return $api -> listSubscribe($list_id, $email, $merge_vars);
+			
+		} else {
+			return false;
+		}
 	}
 	
 	/**

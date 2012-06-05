@@ -70,6 +70,15 @@ class DbUsersSchema extends CakeSchema {
 		                    array(
 		                    	'MailingList' => array(
 		                        	'user_mail_config_id' => $mail_config['UserMailConfig']['id'],
+		                        	'scenario' => 'Registro De Correo'
+								)
+		                    )
+		                );
+						$MailingList -> create();
+		                $MailingList -> save(
+		                    array(
+		                    	'MailingList' => array(
+		                        	'user_mail_config_id' => $mail_config['UserMailConfig']['id'],
 		                        	'scenario' => 'Agradecimiento Compra'
 								)
 		                    )
