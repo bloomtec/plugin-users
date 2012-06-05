@@ -35,7 +35,7 @@ class UsersController extends UserControlAppController {
 		);
 		
 		// Métodos que deben quedar públicos
-		$this -> Auth -> allow('register', 'registerEmail', 'resetPassword');
+		$this -> Auth -> allow('admin_login', 'register', 'registerEmail', 'resetPassword');
 		
 	}
 
@@ -222,6 +222,92 @@ class UsersController extends UserControlAppController {
 	
 	public function admin_setInactive($id) {
 		
+	}
+	
+	/**
+	 * Inicio de sesión
+	 *
+	 * @return void
+	 */
+	public function admin_login() {
+		
+		/**
+		 * Llevar un registro de cuantos inicios de sesión se tienen
+		 */
+		$login_attempts = $this -> Cookie -> read('User.login_attempts');
+		if(!$login_attempts) {
+			$login_attempts = 1;
+			$this -> Cookie -> write('User.login_attempts', $login_attempts);
+			$login_attempts = $this -> Cookie -> read('User.login_attempts');
+		}
+		
+		// Variable que contiene el error del captcha
+		$error = null;
+		
+		if(!$login_attempts || $login_attempts > 3) {
+			/**
+			 * Sección ReCaptcha
+			 */
+			 
+			// ReCaptcha Lib
+			$lib_path = APP . 'Plugin/UserControl/Lib/ReCaptcha/recaptchalib.php';
+			require_once ($lib_path);
+			
+			/**
+			 * Fin sección ReCaptcha
+			 */
+			
+			if ($this -> request -> is('post')) {
+				// was there a reCAPTCHA response?
+				if (isset($_POST['recaptcha_challenge_field']) && isset($_POST['recaptcha_response_field'])) {
+					$resp = recaptcha_check_answer(
+						$this -> private_key, $_SERVER["REMOTE_ADDR"],
+						$_POST['recaptcha_challenge_field'],
+						$_POST['recaptcha_response_field']
+					);
+					
+					// Verificar la respuesta de ReCaptcha
+					if ($resp -> is_valid) {
+						if($this -> request -> is('post')) {
+							if ($this -> Auth -> login()) {
+								$this -> Cookie -> delete('User.login_attempts');
+								return $this -> redirect($this -> Auth -> redirect());
+								$this -> Session -> setFlash(__('Has iniciado sesión.'));
+							} else {
+								$login_attempts += 1;
+								$this -> Cookie -> write('User.login_attempts', $login_attempts);
+								$this -> Session -> setFlash(__('Usuario o contraseña incorrectos.'));
+							}
+						}
+					} else {
+						// Asignar el error para llevar a la vista
+						$this -> Session -> setFlash(__('Debes ingresar los datos correctos al captcha'));
+						$error = $resp -> error;
+					}
+				}
+			}
+		} else {
+			if($this -> request -> is('post')) {
+				if ($this -> Auth -> login()) {
+					$this -> Cookie -> delete('User.login_attempts');
+					return $this -> redirect(array(
+						'controller' => 'users',
+						'action' => 'index',
+						'plugin' => 'user_control',
+						'admin' => true
+					));
+					$this -> Session -> setFlash(__('Has iniciado sesión.'), 'crud/success');
+				} else {
+					$login_attempts += 1;
+					$this -> Cookie -> write('User.login_attempts', $login_attempts);
+					$this -> Session -> setFlash(__('Usuario o contraseña incorrectos.'), 'crud/error');
+				}
+			}
+		}
+		
+		$this -> set('login_attempts', $login_attempts);
+		$this -> set('error', $error);
+		$this -> set('public_key', $this -> public_key);
 	}
 	
 	/**
