@@ -1,19 +1,9 @@
 <div class="users view">
 <h2><?php  echo __('User');?></h2>
 	<dl>
-		<dt><?php echo __('ID'); ?></dt>
-		<dd>
-			<?php echo h($user['User']['id']); ?>
-			&nbsp;
-		</dd>
 		<dt><?php echo __('Rol'); ?></dt>
 		<dd>
-			<?php echo $this->Html->link($user['Role']['id'], array('controller' => 'roles', 'action' => 'view', $user['Role']['id'])); ?>
-			&nbsp;
-		</dd>
-		<dt><?php echo __('Nombre De Usuario'); ?></dt>
-		<dd>
-			<?php echo h($user['User']['username']); ?>
+			<?php echo $this->Html->link($user['Role']['role'], array('controller' => 'roles', 'action' => 'view', $user['Role']['id'])); ?>
 			&nbsp;
 		</dd>
 		<dt><?php echo __('Correo Electrónico'); ?></dt>
@@ -55,8 +45,8 @@
 	</dl>
 </div>
 <div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
+	<h3><?php echo __('Acciones'); ?></h3>
 	<ul>
-		<li><?php echo $this->Html->link(__('Listado De Usuarios'), array('action' => 'index')); ?> </li>
+		<li><?php echo $this->Html->link(__('Ver Usuarios'), array('action' => 'index')); ?> </li>
 	</ul>
 </div>

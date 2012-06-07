@@ -168,7 +168,6 @@ class UsersController extends UserControlAppController {
 			throw new NotFoundException(__('Usuario no válido'));
 		}
 		$user = $this -> User -> read(null, $id);
-		debug($user);
 		$this -> set('user', $user);
 	}
 
@@ -193,7 +192,7 @@ class UsersController extends UserControlAppController {
 		} else {
 			$this -> request -> data = $this -> User -> read(null, $id);
 		}
-		$roles = $this -> User -> Role -> find('list');
+		$roles = $this -> User -> Role -> find('list', array('fields' => array('Role.role')));
 		$this -> set(compact('roles'));
 	}
 	
@@ -212,7 +211,7 @@ class UsersController extends UserControlAppController {
 				$this -> Session -> setFlash(__('No se pudo agregar el usuario. Por favor, intente de nuevo.'), 'crud/error');
 			}
 		}
-		$roles = $this -> User -> Role -> find('list');
+		$roles = $this -> User -> Role -> find('list', array('fields' => array('Role.role')));
 		$this -> set(compact('roles'));
 	}
 

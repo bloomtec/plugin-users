@@ -132,6 +132,14 @@ class User extends UserControlAppModel {
 			),
 		),
 		'verify_password' => array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+				'message' => 'Ingrese una contraseña',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
 			'comparePasswords' => array(
 				'rule' => array('comparePasswords'),
 				'message' => 'Las contraseñas no son iguales',

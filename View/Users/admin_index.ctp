@@ -9,7 +9,7 @@
 			<th><?php echo $this->Paginator->sort('name', __('Nombre', true));?></th>
 			<th><?php echo $this->Paginator->sort('lastname', __('Apellido', true));?></th>
 			<th><?php echo $this->Paginator->sort('is_active', __('Activo', true));?></th>
-			<th class="actions"><?php echo __('Actions');?></th>
+			<th class="actions"><?php echo __('Acciones');?></th>
 	</tr>
 	<?php
 	foreach ($users as $user): ?>
@@ -56,7 +56,7 @@
 	
 </div>
 <div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
+	<h3><?php echo __('Acciones'); ?></h3>
 	<ul>
 		<li><?php echo $this->Html->link(__('Agregar Usuario'), array('action' => 'add')); ?></li>
 	</ul>
