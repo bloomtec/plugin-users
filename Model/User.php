@@ -276,4 +276,25 @@ class User extends UserControlAppModel {
 		)
 	);
 	
+	/**
+	 * hasOne associations
+	 *
+	 * @var array
+	 */	
+	public $hasOne = array(
+		'BCart' => array(
+			'className' => 'BCart.ShoppingCart',
+			'foreignKey' => 'user_id',
+			'dependent' => true,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		)
+	);
+	
 }
