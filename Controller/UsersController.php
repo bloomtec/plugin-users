@@ -320,7 +320,6 @@ class UsersController extends UserControlAppController {
 	 * @return void
 	 */
 	public function login() {
-		
 		/**
 		 * Llevar un registro de cuantos inicios de sesión se tienen
 		 */
