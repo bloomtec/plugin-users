@@ -17,10 +17,12 @@
 </div>
 <?php endif; ?>
 <?php if($login_attempts > 3) : ?>
-	<div class="submit">
+		<div class="submit">
 			<input id="SubmitButton" type="button" value="<?php echo __('Iniciar Sesión'); ?>">
+			<div style="clear:both;"></div>
 		</div>
 		<?php echo $this -> Form -> input('captcha_error', array('value' => $error, 'div' => false, 'label' => false, 'style' => 'visibility:hidden;')); ?>
+		<div style="clear:both;"></div>
 	</form>
 </div>
 <script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>

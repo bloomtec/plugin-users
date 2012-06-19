@@ -229,7 +229,7 @@ class UsersController extends UserControlAppController {
 	 * @return void
 	 */
 	public function admin_login() {
-		
+		$this -> layout="Ez.login";
 		/**
 		 * Llevar un registro de cuantos inicios de sesión se tienen
 		 */
