@@ -403,6 +403,16 @@ class UsersController extends UserControlAppController {
 		$this -> redirect($this -> Auth -> logout());
 	}
 	
+	/**
+	 * Cerrar la sesión administrativa de usuario activa
+	 *
+	 * @return void
+	 */
+	public function admin_logout() {
+		$this -> Auth -> logout();
+		$this -> redirect('/admin');
+	}
+	
 	public function registerEmail() {
 		if($this -> request -> is('post') || $this -> request -> is('put')) {
 			$this -> loadModel('UserMailConfig');
