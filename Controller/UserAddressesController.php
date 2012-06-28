@@ -13,6 +13,18 @@ class UserAddressesController extends UserControlAppController {
 	 */
 	public function beforeFilter() {
 		parent::beforeFilter();		
+		$this -> Auth -> allow('get');
+	}
+	public function get(){
+		if (!$this -> Auth -> user('id')) {
+			return false;
+		}
+		$this -> UserAddress -> recursive=-1;
+		return $this -> UserAddress -> find('all',array(
+			'conditions'=>array(
+				'UserAddress.user_id'=>$this -> Auth -> user('id')
+			)
+		));
 	}
 	
 	/**
