@@ -35,7 +35,7 @@ class UsersController extends UserControlAppController {
 		);
 		
 		// Métodos que deben quedar públicos
-		$this -> Auth -> allow('admin_login', 'register', 'registerEmail', 'resetPassword');
+		$this -> Auth -> allow('admin_login', 'register', 'registerEmail', 'resetPassword', 'createUser');
 		
 	}
 
@@ -470,6 +470,36 @@ class UsersController extends UserControlAppController {
 		}
 	}
 	
+	public function createUser($email, $name, $lastname) {
+		
+		$clientRole = $this -> User -> Role -> find('first', array('order' => array('id' => 'DESC'), 'recursive' => -1));
+		$password = $this -> generatePassword();
+		$user = array(
+			'User' => array(
+				'email' => $email,
+				'verify_email' => $email,
+				'name' => $name,
+				'lastname' => $lastname,
+				'password' => $password,
+				'verify_password' => $password,
+				'role_id' => $clientRole['Role']['id']
+			)
+		);		
+		
+		// Proceder con la creación de usuario
+		$this -> User -> create();
+		if ($this -> User -> save($user)) {
+			$user = $this -> User -> read(null, $this -> User -> id);
+			$user_id = $user['User']['id'];
+			$user_alias = $user['User']['username'];
+			$this -> User -> query("UPDATE `aros` SET `alias`='$user_alias' WHERE `model`='User' AND `foreign_key`=$user_id");
+			return array('user_id' => $user_id, 'password' => $password);
+		} else {
+			return array();
+		}
+		
+	}
+	
 	/**
 	 * Registro de usuario
 	 * 
@@ -503,17 +533,15 @@ class UsersController extends UserControlAppController {
 				// Verificar la respuesta de ReCaptcha
 				if ($resp -> is_valid) {
 					// Proceder con la creación de usuario
-					if(!isset($this -> request -> data['User']['username'])) {
-						$this -> request -> data['User']['username'] = $this -> request -> data['User']['email'];
-					}
 					$clientRole = $this -> User -> Role -> find('first', array('order' => array('id' => 'DESC'), 'recursive' => -1));
 					$this -> request -> data['User']['role_id'] = $clientRole['Role']['id'];
 					$user = array('User' => $this -> request -> data['User']);
 					$address = array('UserAddress' => $this -> request -> data['UserAddress']);
 					$this -> User -> create();
 					if ($this -> User -> save($user)) {
-						$user_id = $this -> User -> id;
-						$user_alias = $this -> request -> data['User']['username'];
+						$user = $this -> User -> read(null, $this -> User -> id);
+						$user_id = $user['User']['id'];
+						$user_alias = $user['User']['username'];
 						$this -> User -> query("UPDATE `aros` SET `alias`='$user_alias' WHERE `model`='User' AND `foreign_key`=$user_id");
 						
 						$address['UserAddress']['user_id'] = $user_id;

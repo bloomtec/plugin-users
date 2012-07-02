@@ -28,7 +28,7 @@ class User extends UserControlAppModel {
 	 * @var array
 	 */
 	public $virtualFields = array(
-		'full_name' => 'CONCAT(name, " ", lastname)'
+		'full_name' => 'CONCAT(User.name, " ", User.lastname)'
 	);
 	
 	/**
@@ -38,9 +38,17 @@ class User extends UserControlAppModel {
 	 */
 	public $validate = array(
 		'role_id' => array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+				'message' => 'Este campo no puede estar vacío',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
 			'numeric' => array(
 				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
+				'message' => 'Este campo es numérico',
 				//'allowEmpty' => false,
 				//'required' => false,
 				//'last' => false, // Stop validation after this rule
@@ -201,15 +209,20 @@ class User extends UserControlAppModel {
 	 * @return true o false acorde si se puede o no guardar la información
 	 */
 	public function beforeSave() {
-		if(!isset($this -> data['User']['role_id']) && isset($this -> data['User']['id'])) {
+		if(isset($this -> data['User']['id']) && !isset($this -> data['User']['role_id'])) {
 			$user = $this -> read(null, $this -> data['User']['id']);
 			if(isset($user['User']['role_id']) && !empty($user['User']['role_id'])) {
 				$this -> data['User']['role_id'] = $user['User']['role_id'];
 			}
+		} else {
+			$this -> data['User']['role_id'] = 3;
 		}
 		if(isset($this -> data['User']['password']) && !empty($this -> data['User']['password'])) {
 			$this -> data['User']['password'] = AuthComponent::password($this -> data['User']['password']);
 			$this -> data['User']['verify_password'] = AuthComponent::password($this -> data['User']['verify_password']);
+		}
+		if(!isset($this -> data['User']['username'])) {
+			$this -> data['User']['username'] = $this -> data['User']['email'];
 		}
 	}
 	
