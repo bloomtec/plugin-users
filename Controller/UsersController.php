@@ -132,17 +132,14 @@ class UsersController extends UserControlAppController {
 					'plugin' => 'user_control'
 				)
 			);
-		} else {
-			if ($this -> request -> is('post') || $this -> request -> is('put')) {
-				if ($this -> User -> UserAddress -> save($this -> request -> data)) {
-					$this -> Session -> setFlash(__('Se guardó la información'), 'crud/success');
-					$this -> redirect(array('action' => 'profile'));
-				} else {
-					$this -> Session -> setFlash(__('No se pudo guardar la información. Por favor, intente de nuevo'), 'crud/success');
-				}
-			}
-			$this -> request -> data = $this -> User -> read(null, $this -> Auth -> user('id'));
-		}
+		} 
+		 $this -> User -> Order -> recursive = -1;
+		$orders = $this -> User -> Order -> find('all',
+			array(
+				'Order.user_id'=>$this -> Auth -> user('id')
+			)
+		);
+		$this -> set('orders',$orders);
 	}
 	
 	/**
