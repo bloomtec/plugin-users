@@ -36,25 +36,29 @@
 			<div class='phone'>
 				<h3>telefono:</h3><?php echo $address['phone']?>
 			</div>
-			<a href="/user_control/user_addresses/edit/<?php echo $address['id']; ?>">Modificar</a>
-			<?php
-				echo $this->Form->postLink(
-					__('Eliminar'),
-					array(
-						'plugin' => 'user_control',
-						'controller' => 'user_addresses',
-						'action' => 'delete',
-						$address['id']
-					),
-					array(
-						'class'=>'delete'
-					),
-					__('¿Elimiinar la dirección ' . $address['name'] . '?', $address['id'])
-				);
-			?>
+				<div class="actions">
+				<a href="/user_control/user_addresses/edit/<?php echo $address['id']; ?>">Modificar</a>
+				
+				<?php
+					echo $this->Form->postLink(
+						__('Eliminar'),
+						array(
+							'plugin' => 'user_control',
+							'controller' => 'user_addresses',
+							'action' => 'delete',
+							$address['id']
+						),
+						array(
+							'class'=>'delete'
+						),
+						__('¿Elimiinar la dirección ' . $address['name'] . '?', $address['id'])
+					);
+				?>
+					<div style="clear:both;"></div>
+				</div>
 		</div>
 	<?php endforeach;?>
 	</div>
 	<div style="clear: both"></div><br />
-	<a href="/user_control/user_addresses/add">Agregar Dirección</a>
+	<a class="button" href="/user_control/user_addresses/add" style="padding:5px;">Agregar Dirección</a>
 </div>
