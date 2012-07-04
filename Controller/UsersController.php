@@ -467,7 +467,7 @@ class UsersController extends UserControlAppController {
 		}
 	}
 	
-	public function createUser($email, $name, $lastname) {
+	public function internalCreateUser($email, $name, $lastname) {
 		
 		$clientRole = $this -> User -> Role -> find('first', array('order' => array('id' => 'DESC'), 'recursive' => -1));
 		$password = $this -> generatePassword();
@@ -495,6 +495,23 @@ class UsersController extends UserControlAppController {
 			return array();
 		}
 		
+	}
+	
+	public function internalLoginUser($user_id = null) {
+		if($user_id) {
+			$this -> User -> id = $user_id;
+			if (!$this -> User -> exists()) {
+				throw new NotFoundException(__('Usuario no válido'));
+			}
+			$user = $this -> User -> read(null, $user_id);
+			if($this -> Auth -> login($user['User'])) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			// TODO : respuesta cuando no hay ID
+		}
 	}
 	
 	/**
@@ -553,8 +570,8 @@ class UsersController extends UserControlAppController {
 						} else {
 							$this -> Session -> setFlash(__('Registro Exitoso'), 'crud/success');
 						}
-						
-						$this -> redirect(array('action' => 'login'));
+						$this -> internalLoginUser($user['User']['id']);
+						$this -> redirect(array('action' => 'profile'));
 					} else {
 						$this -> Session -> setFlash(__('Falló el registro. Verifique los datos e intente de nuevo.'), 'crud/error');
 					}
