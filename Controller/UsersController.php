@@ -448,7 +448,7 @@ class UsersController extends UserControlAppController {
 	/**
 	 * Envío de correo mediante mailchimp
 	 * 
-	 * @var $user arreglo con los datos del usuario
+	 * @var $email correo del usuario
 	 * @var $api_key llave de acceso de la cuenta de mailchimp
 	 * 
 	 * @return true o false dependiendo de si fue exitoso el envío 
@@ -513,6 +513,27 @@ class UsersController extends UserControlAppController {
 		} else {
 			// TODO : respuesta cuando no hay ID
 		}
+	}
+	
+	public function internalSendRegistrationData($user_id = null, $password = null) {
+		$user = $this -> User -> read(null, $user_id);
+		$email_address = Configure::read('email');
+		$email_password = Configure::read('email_password');
+		$site_name = Configure::read('site_name');
+		$gmail = array(
+			'host' => 'ssl://smtp.gmail.com',
+			'port' => 465,
+			'username' => $email_address,
+			'password' => $email_password,
+			'transport' => 'Smtp'
+		);
+		App::uses('CakeEmail', 'Network/Email');
+		$email = new CakeEmail($gmail);
+		$email -> from(array($email_address => $site_name));
+		$email -> to($user['User']['email']);
+		$email -> subject('Contraseña Generada :: ' . $site_name);
+		$email -> send('La contraseña para su cuenta es :: ' . $password);
+		$this -> sendRegistrationEmail($user);
 	}
 	
 	/**
