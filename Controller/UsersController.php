@@ -133,10 +133,11 @@ class UsersController extends UserControlAppController {
 				)
 			);
 		} 
-		 $this -> User -> Order -> recursive = -1;
-		$orders = $this -> User -> Order -> find('all',
-			array(
-				'Order.user_id'=>$this -> Auth -> user('id')
+		$orders = $this -> User -> Order -> find('all',array(
+				'conditions'=>array(
+					'Order.user_id'=>$this -> Auth -> user('id')
+				),
+				'contain'=>array('OrderState','UserAddress','OrderItem'=>array('Product','ProductSize'))
 			)
 		);
 		$this -> set('orders',$orders);
