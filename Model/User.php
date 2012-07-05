@@ -214,7 +214,7 @@ class User extends UserControlAppModel {
 			if(isset($user['User']['role_id']) && !empty($user['User']['role_id'])) {
 				$this -> data['User']['role_id'] = $user['User']['role_id'];
 			}
-		} else {
+		} elseif(!isset($this -> data['User']['role_id'])) {
 			$this -> data['User']['role_id'] = 3;
 		}
 		if(isset($this -> data['User']['password']) && !empty($this -> data['User']['password'])) {
