@@ -5,7 +5,7 @@
 	<p>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vitae turpis eu nisi pharetra commodo. Vivamus volutpat ipsum in elit vehicula adipiscing. Pellentesque ullamcorper consectetur neque vel congue. Vestibulum nibh magna, laoreet nec tincidunt quis, rhoncus quis enim. Donec purus dolor, semper ut pulvinar ut, faucibus ut elit. Donec bibendum dignissim tristique. Vivamus convallis dui vel velit vulputate hendrerit.
 	</p>
-	<?php debug($orders);?>
+	<?php //debug($orders);?>
 	<table class="orders tablas">
 		
 		<tr>
@@ -16,14 +16,15 @@
 			<th> Opciones </th>
 		</tr>
 		<?php foreach( $orders as $order) :?>
-		<tr class="order-info" rel="<?php echo $order['Order']['id']?>">
+		<tr class="order-info">
 			<td><?php echo $order['Order']['created']?></td>
 			<td><?php echo $order['OrderState']['name']?></td>
 			<td><?php echo $order['Order']['comments']?></td>
 			<td><?php echo  $order['UserAddress']['address'];?></td>
-			<td><?php echo $this -> Html -> link('Ver detalles',array('controller'=>'orders',"action"=>"view","plugin"=>false),array('class'=>'rosa')); ?></td>
+			<td><?php echo $this -> Html -> link('Mostrar detalles ',array('controller'=>'orders',"action"=>"view","plugin"=>false),array('class'=>'rosa','rel'=>$order['Order']['id'])); ?></td>
 		</tr>
-		<tr class="order-info"  rel="<?php echo $order['Order']['id']?>">
+		<tr class="order-details"  rel="<?php echo $order['Order']['id']?>">
+			<td colspan="5">
 			<table width="100%" border="0" align="center" cellpadding="0" cellspacing="2" class="tablaCarrito">
 				<?php
 					$subTotal=0;
@@ -83,8 +84,28 @@
 					</th>
 
 				</tr>
-		</table>
+			</table>
+			</td>
 		</tr>
 		<?php endforeach;?>
 	</table>
 </div>
+<script type="text/javascript">
+	$(function(){
+		$('a[rel]').click(function(e){
+			e.preventDefault();
+			$that=$(this);
+			if($that.is('.open')){
+				$that.removeClass('open');
+				$('tr[rel="'+$that.attr('rel')+'"]').hide('slow',function(){
+					$that.text('Mostar detalles ');
+				});
+			}else{
+				$that.addClass('open');
+				$('tr[rel="'+$that.attr('rel')+'"]').show('slow',function(){
+					$that.text('Ocultar detalles');
+				});				
+			}
+		});
+	});
+</script>
