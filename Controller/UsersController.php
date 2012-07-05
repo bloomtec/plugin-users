@@ -448,7 +448,7 @@ class UsersController extends UserControlAppController {
 	/**
 	 * Envío de correo mediante mailchimp
 	 * 
-	 * @var $user arreglo con los datos del usuario
+	 * @var $email correo del usuario
 	 * @var $api_key llave de acceso de la cuenta de mailchimp
 	 * 
 	 * @return true o false dependiendo de si fue exitoso el envío 
@@ -468,7 +468,7 @@ class UsersController extends UserControlAppController {
 		}
 	}
 	
-	public function createUser($email, $name, $lastname) {
+	public function internalCreateUser($email, $name, $lastname) {
 		
 		$clientRole = $this -> User -> Role -> find('first', array('order' => array('id' => 'DESC'), 'recursive' => -1));
 		$password = $this -> generatePassword();
@@ -496,6 +496,44 @@ class UsersController extends UserControlAppController {
 			return array();
 		}
 		
+	}
+	
+	public function internalLoginUser($user_id = null) {
+		if($user_id) {
+			$this -> User -> id = $user_id;
+			if (!$this -> User -> exists()) {
+				throw new NotFoundException(__('Usuario no válido'));
+			}
+			$user = $this -> User -> read(null, $user_id);
+			if($this -> Auth -> login($user['User'])) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			// TODO : respuesta cuando no hay ID
+		}
+	}
+	
+	public function internalSendRegistrationData($user_id = null, $password = null) {
+		$user = $this -> User -> read(null, $user_id);
+		$email_address = Configure::read('email');
+		$email_password = Configure::read('email_password');
+		$site_name = Configure::read('site_name');
+		$gmail = array(
+			'host' => 'ssl://smtp.gmail.com',
+			'port' => 465,
+			'username' => $email_address,
+			'password' => $email_password,
+			'transport' => 'Smtp'
+		);
+		App::uses('CakeEmail', 'Network/Email');
+		$email = new CakeEmail($gmail);
+		$email -> from(array($email_address => $site_name));
+		$email -> to($user['User']['email']);
+		$email -> subject('Contraseña Generada :: ' . $site_name);
+		$email -> send('La contraseña para su cuenta es :: ' . $password);
+		$this -> sendRegistrationEmail($user);
 	}
 	
 	/**
@@ -554,8 +592,8 @@ class UsersController extends UserControlAppController {
 						} else {
 							$this -> Session -> setFlash(__('Registro Exitoso'), 'crud/success');
 						}
-						
-						$this -> redirect(array('action' => 'login'));
+						$this -> internalLoginUser($user['User']['id']);
+						$this -> redirect(array('action' => 'profile'));
 					} else {
 						$this -> Session -> setFlash(__('Falló el registro. Verifique los datos e intente de nuevo.'), 'crud/error');
 					}
