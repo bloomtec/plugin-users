@@ -227,6 +227,9 @@ class UsersController extends UserControlAppController {
 	 * @return void
 	 */
 	public function admin_login() {
+		if($this -> Auth -> user('id') && $this -> Auth -> user('role_id') == 1) {
+			$this -> redirect(array('plugin' => 'user_control', 'action' => 'index'));
+		}
 		$this -> layout="Ez.login";
 		/**
 		 * Llevar un registro de cuantos inicios de sesión se tienen
