@@ -13,6 +13,21 @@ class UsersController extends UserControlAppController {
 	private $private_key = "6LfC5dESAAAAAL-J0uwgmJMSxrBSwSd0uXXZ3Wqt";
 	
 	/**
+	 * Vericar el acceso de un usuario a una función mediante ACL
+	 */
+	public function verifyUserAccess() {
+		// Armar la ruta
+		$ruta = '';
+		for ($i = 0; $i < count($this -> params['ruta']); $i++) {
+			$ruta .= $this -> params['ruta'][$i];
+			if ($i != count($this -> params['ruta']) - 1) {
+				$ruta .= '/';
+			}
+		}
+		return $this -> Acl -> check($this -> Session -> read('Auth.User.username'), $ruta);
+	}
+	
+	/**
 	 * Declarar aquí lo que debe suceder siempre que se acceda a usuarios
 	 * 
 	 * @return void
@@ -168,6 +183,115 @@ class UsersController extends UserControlAppController {
 		$user = $this -> User -> read(null, $id);
 		$this -> set('user', $user);
 	}
+	
+	/**
+	 * Asignar permisos (Seccion de manejo ACL)
+	 *
+	 * @param int $id ID del usuario al que se le asignarán permisos
+	 * @return void
+	 */
+	public function admin_privileges($id) {
+		$this -> User -> Behaviors -> attach('Containable');
+		$this -> User -> contain('Role');
+		$this -> User -> currentUsrId = $this -> Auth -> user('id');
+		$this -> User -> id = $id;
+		if (!$this -> User -> exists()) {
+			throw new NotFoundException(__('Usuario no válido'));
+		} else {
+			$this -> userAliasFix($id);
+		}
+		if ($this -> request -> is('post') || $this -> request -> is('put')) {
+			$user = $this -> User -> find('first', array('conditions' => array('User.id' => $id)));
+			if ($user['User']['role_id'] == 2) {
+				//debug($this -> request -> data);
+				// Es supervisor. Asignar acorde los permisos seleccionados.
+				$aro_id = $this -> User -> query("SELECT `id` FROM `aros` WHERE `model`='User' AND `foreign_key`=$id");
+				$aro_id = $aro_id[0]['aros']['id'];
+				$this -> User -> query("DELETE FROM `aros_acos` WHERE `aro_id`=$aro_id");
+				$this -> setPrivilege($user, 'Categories', $this -> request -> data['Privilege']['Category']);
+				$this -> setPrivilege($user, 'Colors', $this -> request -> data['Privilege']['Color']);
+				$this -> setPrivilege($user, 'ProductSizes', $this -> request -> data['Privilege']['ProductSize']);
+				$this -> setPrivilege($user, 'Products', $this -> request -> data['Privilege']['Product']);
+				$this -> setPrivilege($user, 'Promotions', $this -> request -> data['Privilege']['Promotion']);
+				$this -> setPrivilege($user, 'CouponBatches', $this -> request -> data['Privilege']['CouponBatch']);
+				$this -> setPrivilege($user, 'Orders', $this -> request -> data['Privilege']['Order']);
+				$this -> setPrivilege($user, 'Surveys', $this -> request -> data['Privilege']['Survey']);
+				$this -> setPrivilege($user, 'Pages', $this -> request -> data['Privilege']['Page']);
+				$this -> setPrivilege($user, 'Menus', $this -> request -> data['Privilege']['Menu']);
+				$this -> setPrivilege($user, 'MenuItems', $this -> request -> data['Privilege']['MenuItem']);
+				$this -> Acl -> allow($user['User']['username'], "controllers/UserControl/Users/admin_logout");
+				$this -> Session -> setFlash(__('Se asigaron los permisos al usuario'), 'crud/success');
+				$this -> redirect(array('action' => 'index'));
+			} else {
+				// Caso en que se es administrador o cliente.
+				// Por el momento no se hace algo en estos casos. Admin con acceso a todo y clientes no tienen privilegios extra.
+			}
+		} else {
+			$user = $this -> User -> read(null, $id);
+			$user['Privilege']['Category'] = $this -> getPrivilege($user, 'Categories');
+			$user['Privilege']['Color'] = $this -> getPrivilege($user, 'Colors');
+			$user['Privilege']['ProductSize'] = $this -> getPrivilege($user, 'ProductSizes');
+			$user['Privilege']['Product'] = $this -> getPrivilege($user, 'Products');
+			$user['Privilege']['Promotion'] = $this -> getPrivilege($user, 'Promotions');
+			$user['Privilege']['CouponBatch'] = $this -> getPrivilege($user, 'CouponBatches');
+			$user['Privilege']['Order'] = $this -> getPrivilege($user, 'Orders');
+			$user['Privilege']['Survey'] = $this -> getPrivilege($user, 'Surveys');
+			$user['Privilege']['Page'] = $this -> getPrivilege($user, 'Pages');
+			$user['Privilege']['Menu'] = $this -> getPrivilege($user, 'Menus');
+			$user['Privilege']['MenuItem'] = $this -> getPrivilege($user, 'MenuItems');
+			$this -> request -> data = $user;
+		}
+	}
+	
+	private function userAliasFix($user_id) {
+		$user = $this -> User -> read(null, $user_id);
+		$user_alias = $user['User']['username'];
+		$this -> User -> query("UPDATE `aros` SET `alias`='$user_alias' WHERE `model`='User' AND `foreign_key`=$user_id");
+		//$aro_id = $this -> User -> query("SELECT `id` FROM `aros` WHERE `model`='User' AND `foreign_key`=$user_id");
+		//$aro_id = $aro_id[0]['aros']['id'];
+		//$this -> User -> query("DELETE FROM `aros_acos` WHERE `aro_id`=$aro_id");
+	}
+	
+	private function getControllerActions($controller) {
+		App::uses($controller, 'Controller');
+		$actions = get_class_methods($controller);
+		foreach($actions as $key => $action) {
+			if(!strstr($action, 'admin_')) {
+				unset($actions[$key]);
+			}
+		}
+		return $actions;
+	}
+	
+	/**
+	 * Asignar permisos de una clase especifica
+	 *
+	 * @param array $usuario Arreglo con la información del usuario al que se le está modificando acceso
+	 * @param array $permisos Arreglo con las zonas especificas de la clase en cuestión
+	 */
+	private function setPrivilege($user = null, $controller = null, $access = false) {
+		if($user && $controller && $access) {
+			$actions = $this -> getControllerActions($controller . 'Controller');
+			foreach ($actions as $key => $action) {
+				$this -> Acl -> allow($user['User']['username'], "controllers/$controller/$action");
+			}
+		}
+	}
+
+	/**
+	 * Obtener permisos de una clase especifica
+	 *
+	 * @param array $usuario Arreglo con la información del usuario al que se le está modificando acceso
+	 * @return Arreglo con información de acceso de la clase correspondiente
+	 */
+	private function getPrivilege($user, $controller) {
+		$actions = $this -> getControllerActions($controller . 'Controller');
+		foreach ($actions as $key => $action) {
+			if (!$this -> Acl -> check($user['User']['username'], "controllers/$controller/$action"))
+				return false;
+		}
+		return true;
+	}
 
 	/**
 	 * edit method
@@ -295,12 +419,90 @@ class UsersController extends UserControlAppController {
 			if($this -> request -> is('post')) {
 				if ($this -> Auth -> login()) {
 					$this -> Cookie -> delete('User.login_attempts');
-					return $this -> redirect(array(
-						'controller' => 'users',
-						'action' => 'index',
-						'plugin' => 'user_control',
-						'admin' => true
-					));
+					if($this -> Auth -> user('role_id') == 1) {
+						return $this -> redirect(array(
+							'controller' => 'users',
+							'action' => 'index',
+							'plugin' => 'user_control',
+							'admin' => true
+						));
+					} elseif($this -> Auth -> user('role_id') == 2) {
+						$user = $this -> User -> read(null, $this -> Auth -> user('id'));
+						if($this -> getPrivilege($user, 'Categories')) {
+							return $this -> redirect(array(
+								'controller' => 'categories',
+								'action' => 'index',
+								'plugin' => false,
+								'admin' => true
+							));
+						} elseif($this -> getPrivilege($user, 'Colors')) {
+							return $this -> redirect(array(
+								'controller' => 'colors',
+								'action' => 'index',
+								'plugin' => false,
+								'admin' => true
+							));
+						} elseif($this -> getPrivilege($user, 'ProductSizes')) {
+							return $this -> redirect(array(
+								'controller' => 'product_sizes',
+								'action' => 'index',
+								'plugin' => false,
+								'admin' => true
+							));
+						} elseif($this -> getPrivilege($user, 'Products')) {
+							return $this -> redirect(array(
+								'controller' => 'products',
+								'action' => 'index',
+								'plugin' => false,
+								'admin' => true
+							));
+						} elseif($this -> getPrivilege($user, 'Promotions')) {
+							return $this -> redirect(array(
+								'controller' => 'promotions',
+								'action' => 'index',
+								'plugin' => false,
+								'admin' => true
+							));
+						} elseif($this -> getPrivilege($user, 'CouponBatches')) {
+							return $this -> redirect(array(
+								'controller' => 'coupon_batches',
+								'action' => 'index',
+								'plugin' => false,
+								'admin' => true
+							));
+						} elseif($this -> getPrivilege($user, 'Orders')) {
+							return $this -> redirect(array(
+								'controller' => 'orders',
+								'action' => 'index',
+								'plugin' => false,
+								'admin' => true
+							));
+						} elseif($this -> getPrivilege($user, 'Surveys')) {
+							return $this -> redirect(array(
+								'controller' => 'surveys',
+								'action' => 'index',
+								'plugin' => false,
+								'admin' => true
+							));
+						} elseif($this -> getPrivilege($user, 'Pages')) {
+							return $this -> redirect(array(
+								'controller' => 'pages',
+								'action' => 'index',
+								'plugin' => false,
+								'admin' => true
+							));
+						} elseif($this -> getPrivilege($user, 'Menus')) {
+							return $this -> redirect(array(
+								'controller' => 'menus',
+								'action' => 'index',
+								'plugin' => false,
+								'admin' => true
+							));
+						} else {
+							$this -> Session -> setFlash(__('El usuario no tiene privilegios asignados.'), 'crud/error');
+							$this -> admin_logout();
+						}
+					}
 					$this -> Session -> setFlash(__('Has iniciado sesión.'), 'crud/success');
 				} else {
 					$login_attempts += 1;

@@ -3,7 +3,7 @@
 	<dl>
 		<dt><?php echo __('Rol'); ?></dt>
 		<dd>
-			<?php echo $this->Html->link($user['Role']['role'], array('controller' => 'roles', 'action' => 'view', $user['Role']['id'])); ?>
+			<?php echo $user['Role']['role']; ?>
 			&nbsp;
 		</dd>
 		<dt><?php echo __('Correo Electrónico'); ?></dt>
