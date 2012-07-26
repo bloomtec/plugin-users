@@ -7,13 +7,12 @@ App::uses('AuthComponent', 'Controller/Component');
  * @property Role $Role
  */
 class User extends UserControlAppModel {
-	
 	/**
 	 * Comportamientos
 	 * 
 	 * @var array
 	 */
-	public $actsAs = array('Acl' => array('type' => 'requester'));
+	public $actsAs = array('Acl' => array('type' => 'requester'),'Ez.Auditable');
 	
 	/**
 	 * Campo para mostrar

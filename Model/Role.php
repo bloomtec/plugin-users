@@ -7,7 +7,7 @@ App::uses('UserControlAppModel', 'UserControl.Model');
  */
 class Role extends UserControlAppModel {
 	
-	public $actsAs = array('Acl' => array('type' => 'requester'));
+	public $actsAs = array('Acl' => array('type' => 'requester'),'Ez.Auditable');
 	
 	public $displayField = 'role';
 	
