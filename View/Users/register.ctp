@@ -22,7 +22,8 @@
 			<div class="input calendario">
 				<br />
 				<label>Fecha De Nacimiento</label>
-				<input class="date" type="date" name="data[User][birthday]" required="required">
+				<input class="date" type="text" name="data[User][birthday]" required="required" value='<?php if(isset($this -> request -> data['User']['birthday'])) echo $this -> request -> data['User']['birthday']?>'>					
+				
 				<div style="clear:both"></div>
 			</div>
 			<h2 class='rosa' style='clear:both; margin-bottom:20px;'>Direccion Principal</h2>
@@ -40,7 +41,7 @@
 				<style>#recaptcha_response_field {max-height:45%; max-width:98%;}</style>
 			</div>
 		
-			<?php echo $this -> Form->submit(__('Crear mi cuenta', true),array('class'=>'big-button'));?>
+			<?php echo $this -> Form->submit(__('Crear mi cueta', true),array('class'=>'big-button'));?>
 			<?php echo $this -> Form -> input('captcha_error', array('value' => $error, 'div' => false, 'label' => false, 'style' => 'visibility:hidden;')); ?>
 			<?php echo $this -> Form -> end();?>
 		<!--</fieldset>-->
@@ -65,15 +66,16 @@
 			}
 		});
 		
-		$(":date").dateinput({
+		$(".date").dateinput({
 			lang: 'es',
-			trigger: true,
+			trigger: true, 
 			yearRange: [-90,-10] ,
 			format: 'yyyy-mm-dd',	// the format displayed for the user
-			selectors: true,		// whether month/year dropdowns are shown
-			offset: [0, 0],			// tweak the position of the calendar
-			speed: 'fast',			// calendar reveal speed
-			firstDay: 1				// which day starts a week. 0 = sunday, 1 = monday etc..
+			selectors: true,             	// whether month/year dropdowns are shown
+			offset: [0, 0],            	// tweak the position of the calendar
+			speed: 'fast',               	// calendar reveal speed
+			firstDay: 1                 	// which day starts a week. 0 = sunday, 1 = monday etc..
+	
 	    });
 	
 	});
