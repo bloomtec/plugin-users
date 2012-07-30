@@ -866,7 +866,10 @@ class UsersController extends UserControlAppController {
 			require_once($lib_path);
 			$api = new MCAPI($api_key);
 			
-			$merge_vars = array();
+			$merge_vars = array(
+				'FULLNAME' => $user['User']['name'] . ' ' . $user['User']['lastname'],
+				'SITEPASSWORD' => $user['User']['password']
+			);
 			
 			return $api -> listSubscribe($list_id, $user['User']['email'], $merge_vars);
 			
@@ -882,11 +885,13 @@ class UsersController extends UserControlAppController {
 	 */
 	public function resetPassword() {
 		
+		$this -> User -> Behaviors -> detach('Ez.Auditable');
+		
 		if($this -> request -> is('post') || $this -> request -> is('put')) {
 			
-			if(isset($this -> request -> data['User']['email']) && !empty($this -> request -> data['User']['email'])) {
+			if(isset($this -> request -> data['User']['requestedEmail']) && !empty($this -> request -> data['User']['requestedEmail'])) {
 				$this -> User -> recursive = -1;
-				$test_user = $this -> User -> findByEmail($this -> request -> data['User']['email']);
+				$test_user = $this -> User -> findByEmail($this -> request -> data['User']['requestedEmail']);
 							
 				if($test_user) {
 					$password = $this -> generatePassword();
@@ -909,7 +914,15 @@ class UsersController extends UserControlAppController {
 						$email -> from(array($email_address => $site_name));
 						$email -> to($user['User']['email']);
 						$email -> subject('Renovación De Contraseña :: ' . $site_name);
-						$email -> send('Su nueva contraseña es :: ' . $password);
+						$email -> template('reset_password');
+						$email -> emailFormat('html');
+						$email -> viewVars(
+							array(
+								'user' => $user['User']['full_name'],
+								'password' => $password
+							)
+						);
+						$email -> send();
 					}
 				}
 				
@@ -919,7 +932,7 @@ class UsersController extends UserControlAppController {
 			}
 			
 		}
-			
+
 	}
 	
 	/**

@@ -43,46 +43,38 @@
 				<tr class="content">
 					<td width="80" align="center" class="left">
 						<?php
-						  echo 	$this -> Html->link(
-										$this -> Html->image(
-													'/img/uploads/100x100/' . $item['image'],
-													array('border' => '0')
-												),
-												array('action' => '../products/view/'.$item['Product']['id']."/".$item['color_id']),
-												array('escape' => false)
-										); 
+							echo $this -> Html->link(
+						  		$this -> Html->image(
+						  			'/img/uploads/100x100/' . $item['image'],
+						  			array('border' => '0')
+								),
+								array('action' => '../products/view/' . $item['Product']['id']."/".$item['color_id']),
+								array('escape' => false)
+							); 
 						?>
 					</td>
 					<td>
-						<h3><?php echo $this -> Html->link( $item['Product']['name'], "/products/view/".$item['Product']['id']."/".$item['color_id']);?></h3>
+						<h3><?php echo $this -> Html -> link($item['Product']['name'], "/products/view/".$item['Product']['id']."/".$item['color_id']);?></h3>
 						<span>Ref. <?php echo $item['Product']['reference'] ?></span>
 						<span>Talla <?php echo $item['ProductSize']['name']; ?></span>
 					</td>
 					<td align="center" class="price">
-						<?php echo "$".number_format( $item['Product']['price'], 0, ' ', '.'); ?>
+						<?php echo "$".number_format($item['single_item_price'], 0, ' ', '.'); ?>
 					</td>
-					<td width="115" align="center" class="quantity">						
-						<?php echo $item['quantity']; ?>					
+					<td width="115" align="center" class="quantity">
+						<?php echo $item['quantity']; ?>
 					</td>
 					<td align="center" class="right total">
-						<?php echo "$ ".number_format($item['Product']['price'] * $item['quantity'], 0, ' ', '.');?>
-					</td>				
+						<?php echo "$ ".number_format($item['total_items_price'], 0, ' ', '.');?>
+					</td>
 				</tr>
 				<?php
-						}
+					}
 				?>
 				<tr class="total">
-					<th colspan="3"style="background:none;">
-						
-					</th>
-					<th colspan="1"style="text-align:right;">
-						Total
-					</th>
-					<th style="text-align:center;">
-					
-						<?php if (isset($subTotal)) echo "$ ".number_format($subTotal, 0, ' ', '.');?>
-					</th>
-
+					<th colspan="3"style="background:none;"></th>
+					<th colspan="1"style="text-align:right;">Total</th>
+					<th style="text-align:center;"><?php if (isset($subTotal)) echo "$ ".number_format($subTotal, 0, ' ', '.');?></th>
 				</tr>
 			</table>
 			</td>
