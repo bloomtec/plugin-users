@@ -327,6 +327,10 @@ class UsersController extends UserControlAppController {
 		if ($this -> request -> is('post')) {
 			$this -> User -> create();
 			if ($this -> User -> save($this -> request -> data)) {
+				$user = $this -> User -> read(null, $this -> User -> id);
+				$user_id = $user['User']['id'];
+				$user_alias = $user['User']['username'];
+				$this -> User -> query("UPDATE `aros` SET `alias`='$user_alias' WHERE `model`='User' AND `foreign_key`=$user_id");
 				$this -> Session -> setFlash(__('Se agregó el usuario'), 'crud/success');
 				$this -> redirect(array('action' => 'index'));
 			} else {

@@ -208,20 +208,20 @@ class User extends UserControlAppModel {
 	 * @return true o false acorde si se puede o no guardar la información
 	 */
 	public function beforeSave() {
-		if(isset($this -> data['User']['id']) && !isset($this -> data['User']['role_id'])) {
+		if(isset($this -> data['User']['password']) && !empty($this -> data['User']['password'])) {
+			$this -> data['User']['password'] = AuthComponent::password($this -> data['User']['password']);
+			$this -> data['User']['verify_password'] = AuthComponent::password($this -> data['User']['verify_password']);
+		}
+		if(!isset($this -> data['User']['username']) && isset($this -> data['User']['email'])) {
+			$this -> data['User']['username'] = $this -> data['User']['email'];
+		}
+		if(!isset($this -> data['User']['password']) && isset($this -> data['User']['id']) && !isset($this -> data['User']['role_id'])) {
 			$user = $this -> read(null, $this -> data['User']['id']);
 			if(isset($user['User']['role_id']) && !empty($user['User']['role_id'])) {
 				$this -> data['User']['role_id'] = $user['User']['role_id'];
 			}
 		} elseif(!isset($this -> data['User']['role_id'])) {
 			$this -> data['User']['role_id'] = 3;
-		}
-		if(isset($this -> data['User']['password']) && !empty($this -> data['User']['password'])) {
-			$this -> data['User']['password'] = AuthComponent::password($this -> data['User']['password']);
-			$this -> data['User']['verify_password'] = AuthComponent::password($this -> data['User']['verify_password']);
-		}
-		if(!isset($this -> data['User']['username'])) {
-			$this -> data['User']['username'] = $this -> data['User']['email'];
 		}
 	}
 	

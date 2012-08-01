@@ -38,7 +38,7 @@
 				</tr>
 				<?php
 					foreach($order['OrderItem'] as $item) {
-						$subTotal += $item['Product']['price'] * $item['quantity'];
+						$subTotal += $item['total_items_price'];
 				?>
 				<tr class="content">
 					<td width="80" align="center" class="left">
