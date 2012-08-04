@@ -6,7 +6,7 @@
 		<span><?php echo $user['User']['name']?></span>
 		<h3>Apellidos:</h3>
 		<span><?php echo $user['User']['lastname']?></span>
-		<h3>Numero de Identificacion:</h3>
+		<h3>Número de Identificación:</h3>
 		<span><?php echo $user['DocumentType']['document_type']." ".$user['User']['document']?></span>
 		<h3>Sexo:</h3>
 		<span><?php echo $user['User']['sex']?></span>
@@ -31,10 +31,10 @@
 				<h3>Ciudad:</h3><?php echo $address['city']?>
 			</div>
 			<div class='the-address'>
-				<h3>Direccción:</h3><?php echo $address['address']?>
+				<h3>Dirección:</h3><?php echo $address['address']?>
 			</div>
 			<div class='phone'>
-				<h3>telefono:</h3><?php echo $address['phone']?>
+				<h3>Teléfono:</h3><?php echo $address['phone']?>
 			</div>
 				<div class="actions">
 				<a href="/user_control/user_addresses/edit/<?php echo $address['id']; ?>">Modificar</a>
@@ -51,7 +51,7 @@
 						array(
 							'class'=>'delete'
 						),
-						__('¿Elimiinar la dirección ' . $address['name'] . '?', $address['id'])
+						__('¿Eliminar la dirección ' . $address['name'] . '?', $address['id'])
 					);
 				?>
 					<div style="clear:both;"></div>
