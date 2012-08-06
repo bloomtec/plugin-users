@@ -74,8 +74,8 @@
 			selectors: true,             	// whether month/year dropdowns are shown
 			offset: [0, 0],            	// tweak the position of the calendar
 			speed: 'fast',               	// calendar reveal speed
-			firstDay: 1                 	// which day starts a week. 0 = sunday, 1 = monday etc..
-	
+			firstDay: 1,                 	// which day starts a week. 0 = sunday, 1 = monday etc..
+			value: new Date((new Date()).getYear() - 30, (new Date()).getMonth(), (new Date()).getDate())
 	    });
 	
 	});
