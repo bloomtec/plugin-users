@@ -69,7 +69,7 @@
 		$(".date").dateinput({
 			lang: 'es',
 			trigger: true, 
-			yearRange: [-90,-10] ,
+			yearRange: [-80, 0] ,
 			format: 'yyyy-mm-dd',	// the format displayed for the user
 			selectors: true,             	// whether month/year dropdowns are shown
 			offset: [0, 0],            	// tweak the position of the calendar
