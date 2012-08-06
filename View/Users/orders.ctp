@@ -9,19 +9,19 @@
 	<table class="orders tablas">
 		
 		<tr>
-			<th> Fecha </th>			
-			<th> Estado </th>
-			<th> Comentarios </th>
-			<th> Direción de entrega </th>
-			<th> Opciones </th>
+			<th class="mis-ordenes-fecha"> Fecha </th>			
+			<th class="mis-ordenes-estado"> Estado </th>
+			<th class="mis-ordenes-comentarios"> Comentarios </th>
+			<th class="mis-ordenes-direccion"> Dirección de entrega </th>
+			<th class="mis-ordenes-opciones"> Opciones </th>
 		</tr>
 		<?php foreach( $orders as $order) :?>
 		<tr class="order-info">
-			<td><?php echo $order['Order']['created']?></td>
-			<td><?php echo $order['OrderState']['name']?></td>
-			<td><?php echo $order['Order']['comments']?></td>
-			<td><?php echo  $order['UserAddress']['address'];?></td>
-			<td><?php echo $this -> Html -> link('Mostrar detalles ',array('controller'=>'orders',"action"=>"view","plugin"=>false),array('class'=>'rosa','rel'=>$order['Order']['id'])); ?></td>
+			<td class="mis-ordenes-fecha"><?php echo $order['Order']['created']?></td>
+			<td class="mis-ordenes-estado"><?php echo $order['OrderState']['name']?></td>
+			<td class="mis-ordenes-comentarios"><?php echo $order['Order']['comments']?></td>
+			<td class="mis-ordenes-direccion"><?php echo  $order['UserAddress']['address'];?></td>
+			<td class="mis-ordenes-opciones"><?php echo $this -> Html -> link('Mostrar detalles ',array('controller'=>'orders',"action"=>"view","plugin"=>false),array('class'=>'rosa','rel'=>$order['Order']['id'])); ?></td>
 		</tr>
 		<tr class="order-details"  rel="<?php echo $order['Order']['id']?>">
 			<td colspan="5">
