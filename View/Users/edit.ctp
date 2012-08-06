@@ -1,13 +1,13 @@
 <?php echo $this -> Html -> css('datepicker'); ?>
 <div class="users form">
-	<h1>Modificar Mis datos</h1>
+	<h1>Modificar Mis Datos</h1>
 	<?php echo $this -> Form -> create('User'); ?>
 	<fieldset>
 		<?php
 		echo $this -> Form -> input('id');
 		echo $this -> Form -> input('name', array('label' => 'Nombres'));
 		echo $this -> Form -> input('lastname', array('label' => 'Apellidos'));
-		echo $this -> Form -> input('document_type_id', array('label' => 'Tipo de Documento'));
+		echo $this -> Form -> input('document_type_id', array('label' => 'Tipo De Documento'));
 		echo $this -> Form -> input('document', array('label' => 'Documento'));
 		echo $this -> Form -> input('sex', array("div" => false, 'label' => 'Sexo', 'required' => 'required', 'options' => array('F' => 'Femenino', 'M' => 'Masculino')));
 		//echo $this -> Form -> input('birthday', array('label' => 'Fecha de Nacimiento'));
