@@ -38,7 +38,7 @@
 				<h3 class="profile-label">Teléfono:</h3><?php echo $address['phone']?>
 			</div>
 				<div class="actions">
-				<a href="/user_control/user_addresses/edit/<?php echo $address['id']; ?>">Modificar</a>
+				<a class="button" href="/user_control/user_addresses/edit/<?php echo $address['id']; ?>">Modificar</a>
 				
 				<?php
 					echo $this->Form->postLink(
@@ -50,7 +50,7 @@
 							$address['id']
 						),
 						array(
-							'class'=>'delete'
+							'class'=>'delete button'
 						),
 						__('¿Eliminar la dirección ' . $address['name'] . '?', $address['id'])
 					);
