@@ -1,9 +1,9 @@
 <div class="users">
 	<h2 class="rosa">
-		Mis ordenes
+		Mis Ordenes
 	</h2>
 	<p>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vitae turpis eu nisi pharetra commodo. Vivamus volutpat ipsum in elit vehicula adipiscing. Pellentesque ullamcorper consectetur neque vel congue. Vestibulum nibh magna, laoreet nec tincidunt quis, rhoncus quis enim. Donec purus dolor, semper ut pulvinar ut, faucibus ut elit. Donec bibendum dignissim tristique. Vivamus convallis dui vel velit vulputate hendrerit.
+		Aquí encontrarás un historial con la órdenes que has realizado en nuestra Tienda Virtual.
 	</p>
 	<?php //debug($orders);?>
 	<table class="orders tablas">
