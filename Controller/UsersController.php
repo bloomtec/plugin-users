@@ -797,9 +797,9 @@ class UsersController extends UserControlAppController {
 						// Enviar el correo de registro
 						$result = $this -> sendRegistrationEmail($this -> request -> data);
 						if($result) {
-							$this -> Session -> setFlash(__('Registro Exitoso. Se te ha enviado un correo a la dirección registrada'), 'crud/success');
+							$this -> Session -> setFlash(__('Registro Exitoso. Se te ha enviado un correo a la dirección registrada.'), 'crud/success');
 						} else {
-							$this -> Session -> setFlash(__('Registro Exitoso'), 'crud/success');
+							$this -> Session -> setFlash(__('Registro Exitoso.'), 'crud/success');
 						}
 						$this -> internalLoginUser($user['User']['id']);
 						$this -> redirect(array('action' => 'profile'));
