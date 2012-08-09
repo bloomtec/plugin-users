@@ -2,7 +2,9 @@
 		<h1>INICIA SESIÓN O CREA UNA CUENTA</h1>
 		<div class="izquierda">
 			<h2 class='rosa'>Nuevos Clientes PriceShoes</h2>
-			<p>Al crear una cuenta en nuestra tienda, usted será podrá moverse a través del proceso de pago más rápido, guardar múltiples direcciones para sus envíos, ver y guardar sus favoritos y mas.</p>
+			<p>
+				Al crear una cuenta en nuestra tienda, usted podrá agilizar su proceso de pago, guardar múltiples direcciones para sus envíos, ver y guardar tus productos favoritos y más.
+			</p>
 			<div class="cuadro-formularios">
 				<?php echo $this -> Html->link('Crear',array("controller"=>"users","action"=>"register"), array("class"=>"button"));?>
 				<div style="clear:both;"></div>
