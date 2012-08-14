@@ -13,7 +13,7 @@
 		<div class="derecha">
 			<h2 class='rosa'>Clientes PriceShoes</h2>
 			<?php echo $this -> Form->create("User",array("action"=>"login","controller"=>"users"));?>
-			<p>Sí ya dispone de una cuenta con nosotros por favor ingrese sus datos.</p>
+			<p>Sí ya dispones de una cuenta con nosotros por favor ingresa tus datos.</p>
 				<?php echo $this -> Form->input("username",array('div' => 'email-login',"label"=>"Dirección E-mail", 'value' => ''));?>
 				<?php echo $this -> Form->input("password",array('div' => 'password-login',"label"=>"Contraseña", 'value'=>''));?>
 				<div style="clear:both"></div>

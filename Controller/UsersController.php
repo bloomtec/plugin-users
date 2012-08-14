@@ -805,6 +805,7 @@ class UsersController extends UserControlAppController {
 						$this -> redirect(array('action' => 'profile'));
 					} else {
 						$this -> Session -> setFlash(__('Falló el registro. Verifique los datos e intente de nuevo.'), 'crud/error');
+						debug($this -> User -> invalidFields());
 					}
 				} else {
 					// Asignar el error para llevar a la vista
@@ -871,8 +872,10 @@ class UsersController extends UserControlAppController {
 			$api = new MCAPI($api_key);
 			
 			$merge_vars = array(
-				'FULLNAME' => $user['User']['name'] . ' ' . $user['User']['lastname'],
-				'SITEPASSWORD' => $user['User']['password']
+				'FNAME' => $user['User']['name'],
+				'LNAME' => $user['User']['lastname'],
+				'EMAIL' => $user['User']['email'],
+				'PWORD' => $user['User']['password']
 			);
 			
 			return $api -> listSubscribe($list_id, $user['User']['email'], $merge_vars);

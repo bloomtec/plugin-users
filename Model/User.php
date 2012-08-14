@@ -223,6 +223,7 @@ class User extends UserControlAppModel {
 		} elseif(!isset($this -> data['User']['role_id'])) {
 			$this -> data['User']['role_id'] = 3;
 		}
+		return true;
 	}
 	
 	/**
