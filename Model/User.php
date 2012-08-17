@@ -12,7 +12,7 @@ class User extends UserControlAppModel {
 	 * 
 	 * @var array
 	 */
-	public $actsAs = array('Acl' => array('type' => 'requester'),'Ez.Auditable');
+	public $actsAs = array('Acl' => array('type' => 'requester'), 'Ez.Auditable');
 	
 	/**
 	 * Campo para mostrar
@@ -166,7 +166,37 @@ class User extends UserControlAppModel {
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
+		'document' => array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+				'message' => 'Ingrese su documento',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+			'verifyDocument' => array(
+				'rule' => array('verifyDocument'),
+				'message' => 'El documento ya existe en los registros',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
 	);
+	
+	public function verifyDocument() {
+		if(isset($this -> data['User']['document']) && !empty($this -> data['User']['document'])) {
+			if($this -> findByDocument($this -> data['User']['document'])) {
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			return false;
+		}
+	}
 	
 	/**
 	 * Validación para ver si los correos ingresados son equivalentes
@@ -229,7 +259,7 @@ class User extends UserControlAppModel {
 	/**
 	 * ACL method
 	 */
-	function parentNode() {
+	public function parentNode() {
 	    if (!$this -> id && empty($this -> data)) {
 	        return null;
 	    }

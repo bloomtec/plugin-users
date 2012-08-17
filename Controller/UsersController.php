@@ -51,7 +51,6 @@ class UsersController extends UserControlAppController {
 		
 		// Métodos que deben quedar públicos
 		$this -> Auth -> allow('admin_login', 'register', 'registerEmail', 'resetPassword', 'createUser');
-		
 	}
 
 	/**
@@ -777,13 +776,17 @@ class UsersController extends UserControlAppController {
 				
 				// Verificar la respuesta de ReCaptcha
 				if ($resp -> is_valid) {
+					$this -> loadModel('Aro');
+					$this -> Aro -> verify();
+					$this -> Aro -> recover();
 					// Proceder con la creación de usuario
-					$clientRole = $this -> User -> Role -> find('first', array('order' => array('id' => 'DESC'), 'recursive' => -1));
-					$this -> request -> data['User']['role_id'] = $clientRole['Role']['id'];
-					$user = array('User' => $this -> request -> data['User']);
-					$address = array('UserAddress' => $this -> request -> data['UserAddress']);
+					/* $clientRole = $this -> User -> Role -> find('first', array('order' => array('id' => 'DESC'), 'recursive' => -1));
+					$this -> request -> data['User']['role_id'] = $clientRole['Role']['id']; */
+					$user = array('User' => $this -> request -> data['User']); //debug($user);
+					$address = array('UserAddress' => $this -> request -> data['UserAddress']); //debug($address);
 					$this -> User -> create();
 					if ($this -> User -> save($user)) {
+					//if (User::save($user)) {
 						$user = $this -> User -> read(null, $this -> User -> id);
 						$user_id = $user['User']['id'];
 						$user_alias = $user['User']['username'];
@@ -805,7 +808,7 @@ class UsersController extends UserControlAppController {
 						$this -> redirect(array('action' => 'profile'));
 					} else {
 						$this -> Session -> setFlash(__('Falló el registro. Verifique los datos e intente de nuevo.'), 'crud/error');
-						debug($this -> User -> invalidFields());
+						debug($this -> User -> validationErrors);
 					}
 				} else {
 					// Asignar el error para llevar a la vista
@@ -874,8 +877,7 @@ class UsersController extends UserControlAppController {
 			$merge_vars = array(
 				'FNAME' => $user['User']['name'],
 				'LNAME' => $user['User']['lastname'],
-				'EMAIL' => $user['User']['email'],
-				'PWORD' => $user['User']['password']
+				'EMAIL' => $user['User']['email']
 			);
 			
 			return $api -> listSubscribe($list_id, $user['User']['email'], $merge_vars);
