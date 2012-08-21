@@ -243,14 +243,19 @@ class DbUsersSchema extends CakeSchema {
 		$this -> User -> create();
 		$usuario = array(
 			'User' => array(
+				'role_id' => 1,
+				'document_type_id' => 1,
+				'document' => '1234567',
 				'username' => 'admin',
 				'email' => 'admin@bloomweb.co',
-				'verify_email' => 'admin@bloomweb.co',
-				'password' => 'admin',
-				'verify_password' => 'admin',
 				'name' => 'app',
 				'lastname' => 'admin',
-				'role_id' => 1
+				'password' => 'admin',
+				'birthday' => '1982-01-01',
+				'sex' => 'M',
+				'is_active' => 1,
+				'verify_password' => 'admin',
+				'verify_email' => 'admin@bloomweb.co'
 			)
 		);
 		
@@ -270,27 +275,31 @@ class DbUsersSchema extends CakeSchema {
 		
 		if($answer == 'y') { $usuario['User']['username'] = $usuario['User']['email']; }
 		
-		$this -> User -> save($usuario);
-		
-		// tratando de arreglar lo del alias en la tabla aros
-		$id_usuario = $this -> User -> id;
-		$alias_usuario = $usuario['User']['username'];
-		$this -> User -> query("UPDATE `aros` SET `alias`='$alias_usuario' WHERE `model`='User' AND `foreign_key`=$id_usuario");
-		
-		// Se permite acceso total a los administradores y se le niega totalmente a los demás
-		foreach ($db_roles as $key => $role) {
-			$path = null;
-			$alias = $role['Role']['role'];
-			if($role['Role']['id'] == 1) {
-				// Permitirle acceso total al admin
-				$path = APP . 'Console/cake -app ' . APP . " acl grant $alias controllers";
-				exec($path);
-			} else {
-				// Negar inicialmente acceso a todo a los demás usuarios
-				$path = APP . 'Console/cake -app ' . APP . " acl deny $alias controllers";
-				exec($path);
+		if($this -> User -> save($usuario)) {
+			// tratando de arreglar lo del alias en la tabla aros
+			$id_usuario = $this -> User -> id;
+			$alias_usuario = $usuario['User']['username'];
+			fwrite(STDOUT, "\nAlias del usuario: $alias_usuario\n");
+			$this -> User -> query("UPDATE `aros` SET `alias`='$alias_usuario' WHERE `model`='User' AND `foreign_key`=$id_usuario");
+			
+			// Se permite acceso total a los administradores y se le niega totalmente a los demás
+			foreach ($db_roles as $key => $role) {
+				$path = null;
+				$alias = $role['Role']['role'];
+				if($role['Role']['id'] == 1) {
+					// Permitirle acceso total al admin
+					$path = APP . 'Console/cake -app ' . APP . " acl grant $alias controllers";
+					exec($path);
+				} else {
+					// Negar inicialmente acceso a todo a los demás usuarios
+					$path = APP . 'Console/cake -app ' . APP . " acl deny $alias controllers";
+					exec($path);
+				}
 			}
+		} else {
+			debug($this -> User -> validationErrors);
 		}
+		
 	}
 	
 	public $roles = array(

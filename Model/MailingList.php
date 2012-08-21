@@ -7,11 +7,12 @@ App::uses('UserControlAppModel', 'UserControl.Model');
  * @property List $List
  */
 class MailingList extends UserControlAppModel {
-/**
- * Validation rules
- *
- * @var array
- */
+	
+	/**
+	 * Validation rules
+	 *
+	 * @var array
+	 */
 	public $validate = array(
 		'user_mail_config_id' => array(
 			'numeric' => array(
@@ -37,11 +38,11 @@ class MailingList extends UserControlAppModel {
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
-/**
- * belongsTo associations
- *
- * @var array
- */
+	/**
+	 * belongsTo associations
+	 *
+	 * @var array
+	 */
 	public $belongsTo = array(
 		'UserMailConfig' => array(
 			'className' => 'UserControl.UserMailConfig',
@@ -51,4 +52,5 @@ class MailingList extends UserControlAppModel {
 			'order' => ''
 		)
 	);
+	
 }

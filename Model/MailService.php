@@ -6,11 +6,11 @@ App::uses('UserControlAppModel', 'UserControl.Model');
  * @property UserMailConfig $UserMailConfig
  */
 class MailService extends UserControlAppModel {
-/**
- * Validation rules
- *
- * @var array
- */
+	/**
+	 * Validation rules
+	 *
+	 * @var array
+	 */
 	public $validate = array(
 		'name' => array(
 			'notempty' => array(
@@ -26,11 +26,11 @@ class MailService extends UserControlAppModel {
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
-/**
- * hasMany associations
- *
- * @var array
- */
+	/**
+	 * hasMany associations
+	 *
+	 * @var array
+	 */
 	public $hasMany = array(
 		'UserMailConfig' => array(
 			'className' => 'UserControl.UserMailConfig',

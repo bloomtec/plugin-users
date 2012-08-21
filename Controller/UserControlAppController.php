@@ -1,6 +1,4 @@
 <?php
 
-class UserControlAppController extends AppController {
-	
-}
+class UserControlAppController extends AppController { }
 

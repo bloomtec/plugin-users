@@ -7,7 +7,7 @@ App::uses('UserControlAppModel', 'UserControl.Model');
  * @property MailingList $MailingList
  */
 class UserMailConfig extends UserControlAppModel {
-	public $actsAs = array('Ez.Auditable');
+	
 	/**
 	 * Validation rules
 	 *

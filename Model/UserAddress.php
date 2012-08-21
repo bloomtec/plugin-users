@@ -6,11 +6,12 @@ App::uses('UserControlAppModel', 'UserControl.Model');
  * @property User $User
  */
 class UserAddress extends UserControlAppModel {
-/**
- * Validation rules
- *
- * @var array
- */
+	
+	/**
+	 * Validation rules
+	 *
+	 * @var array
+	 */
 	public $validate = array(
 		'user_id' => array(
 			'numeric' => array(
@@ -86,11 +87,11 @@ class UserAddress extends UserControlAppModel {
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
-/**
- * belongsTo associations
- *
- * @var array
- */
+	/**
+	 * belongsTo associations
+	 *
+	 * @var array
+	 */
 	public $belongsTo = array(
 		'User' => array(
 			'className' => 'UserControl.User',

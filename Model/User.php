@@ -7,12 +7,14 @@ App::uses('AuthComponent', 'Controller/Component');
  * @property Role $Role
  */
 class User extends UserControlAppModel {
+	
 	/**
 	 * Comportamientos
 	 * 
 	 * @var array
 	 */
-	public $actsAs = array('Acl' => array('type' => 'requester'), 'Ez.Auditable');
+	//public $actsAs = array('Acl' => array('type' => 'requester'), 'Ez.Auditable');
+	public $actsAs = array('Acl' => array('type' => 'requester'));
 	
 	/**
 	 * Campo para mostrar
@@ -240,7 +242,6 @@ class User extends UserControlAppModel {
 	public function beforeSave() {
 		if(isset($this -> data['User']['password']) && !empty($this -> data['User']['password'])) {
 			$this -> data['User']['password'] = AuthComponent::password($this -> data['User']['password']);
-			$this -> data['User']['verify_password'] = AuthComponent::password($this -> data['User']['verify_password']);
 		}
 		if(!isset($this -> data['User']['username']) && isset($this -> data['User']['email'])) {
 			$this -> data['User']['username'] = $this -> data['User']['email'];

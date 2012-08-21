@@ -5,10 +5,6 @@ App::uses('UserControlAppController', 'UserControl.Controller');
  *
  */
 class UserMailConfigsController extends UserControlAppController {
-	
-	public function beforeFilter() {
-		parent::beforeFilter();
-	}
 
 	/**
 	 * Cambiar la configuración de aplicaciones web para envío de correos

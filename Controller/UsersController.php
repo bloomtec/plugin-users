@@ -13,26 +13,12 @@ class UsersController extends UserControlAppController {
 	private $private_key = "6LfC5dESAAAAAL-J0uwgmJMSxrBSwSd0uXXZ3Wqt";
 	
 	/**
-	 * Vericar el acceso de un usuario a una función mediante ACL
-	 */
-	public function verifyUserAccess() {
-		// Armar la ruta
-		$ruta = '';
-		for ($i = 0; $i < count($this -> params['ruta']); $i++) {
-			$ruta .= $this -> params['ruta'][$i];
-			if ($i != count($this -> params['ruta']) - 1) {
-				$ruta .= '/';
-			}
-		}
-		return $this -> Acl -> check($this -> Session -> read('Auth.User.username'), $ruta);
-	}
-	
-	/**
 	 * Declarar aquí lo que debe suceder siempre que se acceda a usuarios
 	 * 
 	 * @return void
 	 */
 	public function beforeFilter() {
+		
 		parent::beforeFilter();
 		
 		$this -> User -> bindModel(
@@ -50,7 +36,27 @@ class UsersController extends UserControlAppController {
 		);
 		
 		// Métodos que deben quedar públicos
-		$this -> Auth -> allow('admin_login', 'register', 'registerEmail', 'resetPassword', 'createUser');
+		$this -> Auth -> allow('admin_login', 'login', 'register', 'registerEmail', 'resetPassword', 'createUser', 'logout', 'admin_logout');
+		
+	}
+	
+	/**
+	 * Vericar el acceso de un usuario a una función mediante ACL
+	 */
+	public function verifyUserAccess() {
+		if($this -> Auth -> user('id')) {
+			// Armar la ruta
+			$ruta = '';
+			for ($i = 0; $i < count($this -> params['ruta']); $i++) {
+				$ruta .= $this -> params['ruta'][$i];
+				if ($i != count($this -> params['ruta']) - 1) {
+					$ruta .= '/';
+				}
+			}
+			return $this -> Acl -> check($this -> Session -> read('Auth.User.username'), $ruta);
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -354,10 +360,13 @@ class UsersController extends UserControlAppController {
 	 * @return void
 	 */
 	public function admin_login() {
-		if($this -> Auth -> user('id') && $this -> Auth -> user('role_id') == 1) {
-			$this -> redirect(array('plugin' => 'user_control', 'action' => 'index'));
-		}
+		
 		$this -> layout="Ez.login";
+		
+		$this -> loadModel('Aro');
+		$this -> Aro -> verify();
+		$this -> Aro -> recover();
+		
 		/**
 		 * Llevar un registro de cuantos inicios de sesión se tienen
 		 */
@@ -615,8 +624,7 @@ class UsersController extends UserControlAppController {
 	 * @return void
 	 */
 	public function admin_logout() {
-		$this -> Auth -> logout();
-		$this -> redirect('/admin');
+		$this -> redirect($this -> Auth -> logout());
 	}
 	
 	public function registerEmail() {
@@ -776,9 +784,6 @@ class UsersController extends UserControlAppController {
 				
 				// Verificar la respuesta de ReCaptcha
 				if ($resp -> is_valid) {
-					$this -> loadModel('Aro');
-					$this -> Aro -> verify();
-					$this -> Aro -> recover();
 					// Proceder con la creación de usuario
 					/* $clientRole = $this -> User -> Role -> find('first', array('order' => array('id' => 'DESC'), 'recursive' => -1));
 					$this -> request -> data['User']['role_id'] = $clientRole['Role']['id']; */
@@ -893,8 +898,6 @@ class UsersController extends UserControlAppController {
 	 * @return void
 	 */
 	public function resetPassword() {
-		
-		$this -> User -> Behaviors -> detach('Ez.Auditable');
 		
 		if($this -> request -> is('post') || $this -> request -> is('put')) {
 			
