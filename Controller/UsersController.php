@@ -813,7 +813,7 @@ class UsersController extends UserControlAppController {
 						$this -> redirect(array('action' => 'profile'));
 					} else {
 						$this -> Session -> setFlash(__('Falló el registro. Verifique los datos e intente de nuevo.'), 'crud/error');
-						debug($this -> User -> validationErrors);
+						//debug($this -> User -> validationErrors);
 					}
 				} else {
 					// Asignar el error para llevar a la vista
