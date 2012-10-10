@@ -11,7 +11,7 @@
 		<h3 class="profile-label">Sexo:</h3>
 		<span><?php echo $user['User']['sex']?></span>
 		<h3 class="profile-label">Fecha de Nacimiento:</h3>
-		<span><?php echo $user['User']['birthday']?></span>
+		<span><?php echo $user['User']['birthday']?></span>alo
 	<br />
 	<br />
 	<br />
