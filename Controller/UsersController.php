@@ -64,8 +64,7 @@ class UsersController extends UserControlAppController {
 	 *
 	 * @return void
 	 */
-	public function profile() {
-		// cambios panda	
+	public function profile() {	
 		$this -> layout='profile';
 		if (!$this -> Auth -> user('id')) {
 			$this -> redirect(
