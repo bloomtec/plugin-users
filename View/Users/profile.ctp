@@ -1,5 +1,6 @@
 <div class="content">
-	<h1>Mis Datos</h1>
+	
+		<h1>Mis Datos</h1>
 		<h3 class="profile-label">Email:</h3>
 		<span><?php echo $user['User']['email']?></span>
 		<h3 class="profile-label">Nombres:</h3>

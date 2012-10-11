@@ -75,7 +75,13 @@ class UsersController extends UserControlAppController {
 				)
 			);
 		} else {
-			$this -> set('user', $this -> User -> read(null, $this -> Auth -> user('id')));
+			$referer=split('/', $this -> referer());
+			$user = $this -> User -> read(null, $this -> Auth -> user('id'));
+			if( $referer[count($referer) -1 ] == "login" ) {
+				$mensaje="Bienvenido ".$user['User']['name'].", tu ingreso ha sido exitoso";
+				$this -> set('mensaje',$mensaje);
+			}
+			$this -> set('user', $user);
 		}
 	}
 
