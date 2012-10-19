@@ -654,7 +654,7 @@ class UsersController extends UserControlAppController {
 						)) {
 							$this -> Session -> setFlash('Por favor revisa tu correo para confirmar el registro', 'crud/success');
 						} else {
-							$this -> Session -> setFlash('Ha ocurrido un error al registrar el correo. Por favor intente de nuevo.', 'crud/error');
+							$this -> Session -> setFlash('Ha ocurrido un error al registrar el correo. Por favor verifica el dato ingresado e intenta de nuevo.', 'crud/error');
 						}
 						break;
 					// No hay servicios configurados
