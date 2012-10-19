@@ -575,8 +575,8 @@ class UsersController extends UserControlAppController {
 						if($this -> request -> is('post')) {
 							if ($this -> Auth -> login()) {
 								$this -> Cookie -> delete('User.login_attempts');
+								$this -> Session -> setFlash(__('Has iniciado sesión.'), 'crud/success');
 								return $this -> redirect($this -> Auth -> redirect());
-								$this -> Session -> setFlash(__('Has iniciado sesión.'));
 							} else {
 								$login_attempts += 1;
 								$this -> Cookie -> write('User.login_attempts', $login_attempts);
@@ -594,8 +594,8 @@ class UsersController extends UserControlAppController {
 			if($this -> request -> is('post')) {
 				if ($this -> Auth -> login()) {
 					$this -> Cookie -> delete('User.login_attempts');
-					return $this -> redirect($this -> Auth -> redirect());
 					$this -> Session -> setFlash(__('Has iniciado sesión.'), 'crud/success');
+					return $this -> redirect($this -> Auth -> redirect());
 				} else {
 					$login_attempts += 1;
 					$this -> Cookie -> write('User.login_attempts', $login_attempts);
@@ -628,6 +628,7 @@ class UsersController extends UserControlAppController {
 	}
 	
 	public function registerEmail() {
+		$this -> autoRender = false;
 		if($this -> request -> is('post') || $this -> request -> is('put')) {
 			$this -> loadModel('UserMailConfig');
 			$this -> loadModel('MailingList');
@@ -653,12 +654,13 @@ class UsersController extends UserControlAppController {
 					// No hay servicios configurados
 					default:
 						// TODO : que hacer aqui?
-						return false;
 						break;
 				}
+			} else {
+				$this -> Session -> setFlash('Actualmente nuestro servicio de lista de correos esta inactivo. Por favor, intenta más tarde.');
 			}
-			$this -> redirect($this -> referer());
 		}
+		$this -> redirect($this -> referer());
 	}
 	
 	/**
