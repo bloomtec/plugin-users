@@ -581,7 +581,7 @@ class UsersController extends UserControlAppController {
 						if($this -> request -> is('post')) {
 							if ($this -> Auth -> login()) {
 								$this -> Cookie -> delete('User.login_attempts');
-								$this -> Session -> setFlash(__('Has iniciado sesión.'), 'crud/success');
+								//$this -> Session -> setFlash(__('Has iniciado sesión.'), 'crud/success');
 								return $this -> redirect($this -> Auth -> redirect());
 							} else {
 								$login_attempts += 1;
@@ -600,7 +600,7 @@ class UsersController extends UserControlAppController {
 			if($this -> request -> is('post')) {
 				if ($this -> Auth -> login()) {
 					$this -> Cookie -> delete('User.login_attempts');
-					$this -> Session -> setFlash(__('Has iniciado sesión.'), 'crud/success');
+					//$this -> Session -> setFlash(__('Has iniciado sesión.'), 'crud/success');
 					return $this -> redirect($this -> Auth -> redirect());
 				} else {
 					$login_attempts += 1;
