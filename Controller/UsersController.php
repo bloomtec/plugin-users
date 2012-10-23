@@ -36,7 +36,7 @@ class UsersController extends UserControlAppController {
 		);
 		
 		// Métodos que deben quedar públicos
-		$this -> Auth -> allow('admin_login', 'login', 'register', 'registerEmail', 'resetPassword', 'createUser', 'logout', 'admin_logout');
+		$this -> Auth -> allow('admin_login', 'login', 'register', 'registerEmail', 'resetPassword', 'createUser', 'logout', 'admin_logout', 'profile');
 		
 	}
 	

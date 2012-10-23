@@ -1,18 +1,17 @@
 <div class="content">
-	
-		<h1>Mis Datos</h1>
-		<h3 class="profile-label">Email:</h3>
-		<span><?php echo $user['User']['email']?></span>
-		<h3 class="profile-label">Nombres:</h3>
-		<span><?php echo $user['User']['name']?></span>
-		<h3 class="profile-label">Apellidos:</h3>
-		<span><?php echo $user['User']['lastname']?></span>
-		<h3 class="profile-label">Número de Identificación:</h3>
-		<span><?php echo $user['DocumentType']['document_type']." ".$user['User']['document']?></span>
-		<h3 class="profile-label">Sexo:</h3>
-		<span><?php echo $user['User']['sex']?></span>
-		<h3 class="profile-label">Fecha de Nacimiento:</h3>
-		<span><?php echo $user['User']['birthday']?></span>
+	<h1>Mis Datos</h1>
+	<h3 class="profile-label">Email:</h3>
+	<span><?php echo $user['User']['email']?></span>
+	<h3 class="profile-label">Nombres:</h3>
+	<span><?php echo $user['User']['name']?></span>
+	<h3 class="profile-label">Apellidos:</h3>
+	<span><?php echo $user['User']['lastname']?></span>
+	<h3 class="profile-label">Número de Identificación:</h3>
+	<span><?php echo $user['DocumentType']['document_type']." ".$user['User']['document']?></span>
+	<h3 class="profile-label">Sexo:</h3>
+	<span><?php echo $user['User']['sex']?></span>
+	<h3 class="profile-label">Fecha de Nacimiento:</h3>
+	<span><?php echo $user['User']['birthday']?></span>
 	<br />
 	<br />
 	<br />
