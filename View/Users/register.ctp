@@ -47,7 +47,10 @@
 		<!--</fieldset>-->
 	<div style="clear:both;"></div>
 </div>
-<script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
+<?php
+	echo $this->Html->script('recaptcha_ajax');
+	//<script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
+?>
 <script type="text/javascript">
 	$(function(){
 		
